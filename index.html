@@ -260,7 +260,77 @@ footer a{font-weight:700}
 @media(prefers-reduced-motion:reduce){
   *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ========================= GITPULSE 2.0 INTELLIGENCE LAYER ========================= */
+.intel-nav{display:flex;gap:8px;flex-wrap:wrap;margin:30px 0 16px}
+.intel-tab{border:2px solid var(--border);background:var(--surface);color:var(--text);padding:9px 12px;font:700 .72rem "Space Grotesk";text-transform:uppercase;box-shadow:3px 3px 0 var(--shadow)}
+.intel-tab.active,.intel-tab:hover{background:var(--yellow);color:#121212}
+.intel-panel{display:none}
+.intel-panel.active{display:block;animation:enter .18s ease}
+.intel-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.intel-card{padding:20px;min-width:0}
+.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}
+.intel-title{font:700 1.25rem "Space Grotesk";text-transform:uppercase;margin-bottom:5px}
+.intel-sub{font-size:.76rem;color:var(--muted);line-height:1.45}
+.dna{display:grid;grid-template-columns:170px 1fr;gap:22px;align-items:center}
+.dna-mark{width:150px;height:150px;border:4px solid var(--border);background:var(--yellow);box-shadow:8px 8px 0 var(--shadow);display:grid;place-items:center;text-align:center;font:700 1.25rem/1 "Space Grotesk";transform:rotate(-2deg)}
+.pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.pill{border:2px solid var(--border);padding:5px 8px;background:var(--surface-2);font:700 .66rem "Space Grotesk"}
+.pill.green{background:var(--green);color:#121212}.pill.blue{background:var(--blue);color:#fff}.pill.coral{background:var(--coral);color:#fff}
+.bars{display:grid;gap:10px;margin-top:14px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 48px;gap:8px;align-items:center;font-size:.7rem;font-weight:700}
+.bar-track{height:12px;border:2px solid var(--border);background:var(--surface-2)}
+.bar-fill{height:100%;background:var(--blue)}
+.timeline{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-top:16px}
+.timeline-item{border:2px solid var(--border);padding:12px;background:var(--surface-2);min-height:90px}
+.timeline-year{font:700 1.2rem "Space Grotesk"}.timeline-count{font-size:.7rem;color:var(--muted);margin-top:6px}.timeline-item.peak{background:var(--yellow);color:#121212}
+.health-list,.radar-list{display:grid;gap:10px;margin-top:14px}
+.health-row,.radar-row{border:2px solid var(--border);padding:12px;background:var(--surface-2);display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.health-name,.radar-name{font:700 .9rem "Space Grotesk";overflow-wrap:anywhere}
+.health-meter{height:9px;border:2px solid var(--border);margin-top:8px;background:var(--surface)}
+.health-meter span{display:block;height:100%;background:var(--green)}
+.radar-score{font:700 1.4rem "Space Grotesk";color:var(--coral)}
+.repo-badge{display:inline-flex;border:2px solid var(--border);padding:4px 7px;background:var(--yellow);color:#121212;font:700 .6rem "Space Grotesk";text-transform:uppercase}
+.portfolio-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}
+.portfolio-box{border:2px solid var(--border);padding:13px;background:var(--surface-2)}.portfolio-box b{display:block;font:700 1.65rem "Space Grotesk"}.portfolio-box span{font-size:.65rem;font-weight:700;color:var(--muted)}
+.compare-controls{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end}
+.compare-controls label{display:grid;gap:6px;font:700 .7rem "Space Grotesk";text-transform:uppercase}
+.compare-input{min-height:44px;border:2px solid var(--border);background:var(--surface);color:var(--text);padding:9px 11px}
+.compare-result{margin-top:16px}
+.compare-table{width:100%;border-collapse:collapse;font-size:.75rem}.compare-table th,.compare-table td{border:2px solid var(--border);padding:9px;text-align:center}.compare-table th{background:var(--yellow);color:#121212}.compare-table td:first-child{text-align:left;font-weight:700}
+.battle{display:grid;grid-template-columns:1fr 70px 1fr;gap:10px;align-items:center}.battle-side{border:3px solid var(--border);padding:16px;background:var(--surface-2)}.battle-side.winner{background:var(--green);color:#121212}.battle-vs{font:700 1.3rem "Space Grotesk";text-align:center}
+.tech-controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.select{min-height:42px;border:2px solid var(--border);background:var(--surface);color:var(--text);padding:8px 10px;font-weight:700;min-width:220px}
+.dependency-tree{display:grid;gap:7px;margin-top:14px}.dep-root{border:3px solid var(--border);padding:13px;background:var(--yellow);color:#121212;font:700 .85rem "Space Grotesk"}.dep-group{border-left:4px solid var(--border);padding-left:12px;display:grid;gap:6px}.dep-item{border:2px solid var(--border);padding:8px;background:var(--surface-2);font-size:.72rem;display:flex;justify-content:space-between;gap:8px}
+.report-card{display:flex;justify-content:space-between;gap:16px;align-items:center}.report-card .btn{white-space:nowrap}
+.note-box{border:2px dashed var(--border);padding:12px;background:var(--surface-2);font-size:.72rem;color:var(--muted);line-height:1.5;margin-top:12px}
+.empty-intel{border:2px dashed var(--border);padding:22px;color:var(--muted);font-weight:700;background:var(--surface-2)}
+@media(max-width:900px){
+  .span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}
+  .dna{grid-template-columns:1fr}.dna-mark{margin:auto}.portfolio-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .compare-controls{grid-template-columns:1fr}.battle{grid-template-columns:1fr}.battle-vs{display:none}.portfolio-grid{grid-template-columns:1fr}
+  .bar-row{grid-template-columns:88px 1fr 38px}
+}
+
 </style>
+
+<style>
+@media print{
+  body{background:#fff!important;color:#111!important}
+  .site-header,.dashboard-nav,.intel-nav,footer,.modal-backdrop,#view-landing,#view-loading,#view-error{display:none!important}
+  main{padding:0!important;width:100%!important}
+  #view-results{display:block!important}
+  .dashboard-grid{grid-template-columns:1fr!important}
+  .passport,.card{box-shadow:none!important;break-inside:avoid}
+  .intel-root,.intel-panel{display:block!important}
+  .intel-panel{margin-top:20px;break-before:auto}
+  .intel-panel:not([data-intel-panel="overview"]){break-before:page}
+  #intel-root{display:block!important}
+  .btn{display:none!important}
+}
+</style>
+
 </head>
 <body>
 <header class="site-header">
@@ -400,10 +470,141 @@ footer a{font-weight:700}
     <div id="repos-grid" class="repos-grid"></div>
   </div>
 </section>
+
+<div id="intel-root" hidden>
+  <nav class="intel-nav" aria-label="GitPulse intelligence sections">
+    <button class="intel-tab active" data-intel-tab="overview">DNA</button>
+    <button class="intel-tab" data-intel-tab="growth">Growth</button>
+    <button class="intel-tab" data-intel-tab="gems">Intelligence</button>
+    <button class="intel-tab" data-intel-tab="technical">Technical</button>
+    <button class="intel-tab" data-intel-tab="compare">Compare</button>
+    <button class="intel-tab" data-intel-tab="report">Report</button>
+  </nav>
+
+  <section class="intel-panel active" data-intel-panel="overview">
+    <div class="intel-grid">
+      <article class="card intel-card span-7">
+        <div class="section-head"><div><div class="section-title">Developer DNA</div><div class="metric-note">Derived only from public GitHub metadata</div></div><span id="dna-score" class="repo-badge">DNA SIGNAL</span></div>
+        <div class="dna">
+          <div id="dna-mark" class="dna-mark">BUILDER</div>
+          <div><div id="dna-title" class="intel-title">THE BUILDER</div><p id="dna-copy" class="intel-sub"></p><div id="dna-pills" class="pill-row"></div></div>
+        </div>
+      </article>
+      <article class="card intel-card span-5">
+        <div class="section-title">Skill Matrix</div>
+        <p class="intel-sub">Activity indicators, not proof of expertise.</p>
+        <div id="skill-bars" class="bars"></div>
+      </article>
+      <article class="card intel-card span-4">
+        <div class="section-title">Project Portfolio</div>
+        <p class="intel-sub">A portfolio lens for your public repositories.</p>
+        <div id="portfolio-grid" class="portfolio-grid"></div>
+      </article>
+      <article class="card intel-card span-8">
+        <div class="section-title">Repository Health</div>
+        <div id="health-list" class="health-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="intel-panel" data-intel-panel="growth">
+    <div class="intel-grid">
+      <article class="card intel-card span-12">
+        <div class="section-head"><div><div class="section-title">Technology Journey</div><div class="metric-note">Languages detected from repository metadata and byte analysis</div></div><span id="journey-range" class="section-meta"></span></div>
+        <div id="journey" class="timeline"></div>
+      </article>
+      <article class="card intel-card span-12">
+        <div class="section-title">Repository Growth Timeline</div>
+        <p class="intel-sub">Repositories grouped by creation year. Peaks show the most active creation period.</p>
+        <div id="growth-timeline" class="timeline"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="intel-panel" data-intel-panel="gems">
+    <div class="intel-grid">
+      <article class="card intel-card span-6">
+        <div class="section-head"><div><div class="section-title">Hidden Gems</div><div class="metric-note">Low popularity + strong signals</div></div><span class="repo-badge">GEM RADAR</span></div>
+        <div id="gems-list" class="radar-list"></div>
+      </article>
+      <article class="card intel-card span-6">
+        <div class="section-head"><div><div class="section-title">Revival Radar</div><div class="metric-note">Older projects with reasons to return</div></div><span class="repo-badge">REVIVE</span></div>
+        <div id="revival-list" class="radar-list"></div>
+      </article>
+      <article class="card intel-card span-12">
+        <div class="section-title">Repository Potential & Health</div>
+        <div id="potential-list" class="health-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="intel-panel" data-intel-panel="technical">
+    <div class="intel-grid">
+      <article class="card intel-card span-12">
+        <div class="section-head"><div><div class="section-title">Technical Intelligence</div><div class="metric-note">Browser-side inspection of public repository files</div></div></div>
+        <div class="tech-controls">
+          <label class="section-meta" for="tech-repo">Repository</label>
+          <select id="tech-repo" class="select"></select>
+          <button id="scan-tech" class="btn small blue" type="button">SCAN PROJECT</button>
+        </div>
+        <div id="tech-output" class="note-box">Choose a repository and scan for common manifests such as package.json, requirements.txt, pyproject.toml, Cargo.toml, go.mod, and pom.xml.</div>
+        <div id="dependency-tree" class="dependency-tree"></div>
+      </article>
+      <article class="card intel-card span-6">
+        <div class="section-title">GitHub Hygiene</div>
+        <div id="hygiene-bars" class="bars"></div>
+      </article>
+      <article class="card intel-card span-6">
+        <div class="section-title">Repository Graveyard</div>
+        <div id="graveyard-list" class="health-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="intel-panel" data-intel-panel="compare">
+    <div class="intel-grid">
+      <article class="card intel-card span-12">
+        <div class="section-title">Developer Battle</div>
+        <p class="intel-sub">Compare two public GitHub users without storing anything remotely.</p>
+        <div class="compare-controls" style="margin-top:14px">
+          <label>Developer A<input id="compare-a" class="compare-input" placeholder="torvalds" maxlength="39"></label>
+          <button id="compare-btn" class="btn coral" type="button">BATTLE ⚔</button>
+          <label>Developer B<input id="compare-b" class="compare-input" placeholder="octocat" maxlength="39"></label>
+        </div>
+        <div id="compare-output" class="compare-result"></div>
+      </article>
+      <article class="card intel-card span-12">
+        <div class="section-title">Repository Battle</div>
+        <p class="intel-sub">Pick two original repositories from the current profile.</p>
+        <div class="compare-controls" style="margin-top:14px">
+          <select id="battle-a" class="select"></select>
+          <button id="battle-btn" class="btn" type="button">COMPARE ⚡</button>
+          <select id="battle-b" class="select"></select>
+        </div>
+        <div id="battle-output" class="compare-result"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="intel-panel" data-intel-panel="report">
+    <div class="intel-grid">
+      <article class="card intel-card span-12 report-card">
+        <div><div class="section-title">GitPulse Developer Report</div><p class="intel-sub">Print this page to PDF, or save the current passport as PNG. No server is involved.</p></div>
+        <button id="print-report" class="btn green" type="button">PRINT / SAVE PDF 🖨</button>
+      </article>
+      <article class="card intel-card span-12">
+        <div class="section-title">Report Snapshot</div>
+        <div id="report-snapshot" class="portfolio-grid"></div>
+        <div id="report-note" class="note-box"></div>
+      </article>
+    </div>
+  </section>
+</div>
+
 </main>
 
 <footer>
-  <div>GITPULSE · DEVELOPER PASSPORT GENERATOR · BUILT WITH GITHUB REST API</div>
+  <div>GITPULSE · DEVELOPER INTELLIGENCE ENGINE · 100% CLIENT-SIDE · GITHUB REST API</div>
   <div class="footer-right">PUBLIC GITHUB DATA ONLY · NOT AFFILIATED WITH GITHUB · <a href="https://github.com" target="_blank" rel="noopener noreferrer">GITHUB ↗</a></div>
 </footer>
 
@@ -458,7 +659,7 @@ const LANGUAGE_COLORS = {
   Vue:'#41b883',Svelte:'#ff3e00',Scala:'#dc322f',R:'#198ce7',Jupyter:'#da5b0b',Default:'#9b9b93'
 };
 
-const state = {
+const state = window.GitPulseState = {
   view:'landing', username:'', user:null, repos:[], languages:{}, languageReposAnalyzed:0,
   metrics:{stars:0,forks:0,active:0,score:0,activity:'INACTIVE',lastActivity:null},
   theme:null, controller:null, requestId:0, lastError:null, previousFocus:null, loadingTimer:null
@@ -942,7 +1143,15 @@ DOM.download.addEventListener('click',exportPng);
 window.addEventListener('popstate',()=>{
   const param=new URLSearchParams(location.search).get('user');
   if(param){DOM.input.value=param;search(param)}
-  else goHome();
+  else {
+    if(state.controller)state.controller.abort();
+    state.requestId++;
+    setFetchBusy(false);
+    stopLoading();
+    DOM.input.value='';
+    setView('landing');
+    DOM.input.focus();
+  }
 });
 
 window.addEventListener('error',e=>{
@@ -960,5 +1169,361 @@ function init(){
 init();
 })();
 </script>
+
+<script>
+(() => {
+  'use strict';
+
+  const S = window.GitPulseState;
+  if (!S) return;
+
+  const $ = id => document.getElementById(id);
+  const E = {
+    root:$('intel-root'),
+    tabs:[...document.querySelectorAll('[data-intel-tab]')],
+    panels:[...document.querySelectorAll('[data-intel-panel]')],
+    dnaMark:$('dna-mark'),dnaTitle:$('dna-title'),dnaCopy:$('dna-copy'),dnaPills:$('dna-pills'),dnaScore:$('dna-score'),
+    skills:$('skill-bars'),portfolio:$('portfolio-grid'),health:$('health-list'),
+    journey:$('journey'),journeyRange:$('journey-range'),growth:$('growth-timeline'),
+    gems:$('gems-list'),revival:$('revival-list'),potential:$('potential-list'),
+    techRepo:$('tech-repo'),scanTech:$('scan-tech'),techOutput:$('tech-output'),deps:$('dependency-tree'),
+    hygiene:$('hygiene-bars'),graveyard:$('graveyard-list'),
+    compareA:$('compare-a'),compareB:$('compare-b'),compareBtn:$('compare-btn'),compareOut:$('compare-output'),
+    battleA:$('battle-a'),battleB:$('battle-b'),battleBtn:$('battle-btn'),battleOut:$('battle-output'),
+    print:$('print-report'),snapshot:$('report-snapshot'),reportNote:$('report-note')
+  };
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const n = x => Number(x)||0;
+  const daysSince = d => d ? Math.max(0,(Date.now()-new Date(d).getTime())/86400000) : Infinity;
+  const fresh = r => daysSince(r?.pushed_at) <= 180;
+  const originalRepos = () => S.repos.filter(r => !r.fork);
+  const fmt = x => typeof formatNumber === 'function' ? formatNumber(x) : String(n(x));
+  const rel = x => typeof formatRelative === 'function' ? formatRelative(x) : 'No recent activity';
+  const esc = x => String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  function scoreRepo(r){
+    const ageDays = r.created_at ? Math.max(1,daysSince(r.created_at)) : 365;
+    const popularity = Math.log1p(n(r.stargazers_count))*6 + Math.log1p(n(r.forks_count))*3;
+    const activity = fresh(r) ? 18 : daysSince(r.pushed_at) < 365 ? 8 : 0;
+    const community = Math.min(18, Math.log1p(n(r.open_issues_count))*4);
+    const docs = (r.description ? 4 : 0) + (r.license ? 4 : 0) + (r.has_issues ? 2 : 0);
+    const agePenalty = ageDays > 1200 && !fresh(r) ? 10 : 0;
+    return Math.max(0,Math.min(100,Math.round(popularity+activity+community+docs-agePenalty)));
+  }
+
+  function potential(r){
+    const stars=n(r.stargazers_count), forks=n(r.forks_count);
+    const engagement = Math.min(25,Math.log1p(stars)*5 + Math.log1p(forks)*4);
+    const recent = fresh(r)?28:daysSince(r.pushed_at)<365?13:0;
+    const docs = (r.description?8:0)+(r.license?6:0)+(r.has_issues?4:0);
+    const community = Math.min(16,Math.log1p(n(r.open_issues_count))*4);
+    return Math.max(0,Math.min(100,Math.round(engagement+recent+docs+community)));
+  }
+
+  function health(r){
+    const activity = fresh(r)?30:daysSince(r.pushed_at)<365?17:4;
+    const community = Math.min(20,Math.log1p(n(r.stargazers_count))*3 + Math.log1p(n(r.forks_count))*2);
+    const docs = (r.description?12:0)+(r.license?10:0)+(r.has_issues?4:0)+(r.homepage?4:0);
+    const freshness = r.archived ? 0 : 10;
+    return Math.max(0,Math.min(100,Math.round(activity+community+docs+freshness)));
+  }
+
+  function classifyDNA(){
+    const repos=originalRepos(), languages=Object.entries(S.languages||{}).sort((a,b)=>n(b[1])-n(a[1]));
+    const active=repos.filter(fresh).length, stars=n(S.metrics.stars), followers=n(S.user?.followers);
+    const recentRatio=repos.length ? active/repos.length : 0;
+    let type='EXPLORER', copy='A broad public footprint with multiple technologies and project directions.';
+    if(repos.length>=12 && recentRatio>=.35) {type='BUILDER';copy='You publish a lot and keep a meaningful slice of the portfolio moving.';}
+    else if(languages.length<=3 && repos.length>=4) {type='SPECIALIST';copy='Your public projects cluster around a relatively focused technology footprint.';}
+    else if(stars>followers*1.5 && stars>100) {type='OPEN SOURCER';copy='Your repositories attract attention beyond the size of your follower graph.';}
+    else if(repos.length>=8 && recentRatio<.2) {type='EXPERIMENTER';copy='Your portfolio shows many experiments, with several projects now cooling down.';}
+    else if(stars>500) {type='ARCHITECT';copy='Popularity and project breadth suggest a portfolio with mature public work.';}
+    else if(recentRatio>=.65) {type='CONSISTENT CODER';copy='A high share of your repositories show recent public updates.';}
+    const pills=[`${repos.length} ORIGINAL PROJECTS`,`${languages.length} LANGUAGES`,`${active} ACTIVE`,`${fmt(stars)} STARS`];
+    return {type,copy,pills};
+  }
+
+  function renderDNA(){
+    const d=classifyDNA();
+    E.dnaMark.textContent=d.type;
+    E.dnaTitle.textContent=`THE ${d.type}`;
+    E.dnaCopy.textContent=d.copy;
+    E.dnaPills.replaceChildren();
+    d.pills.forEach((x,i)=>{const p=document.createElement('span');p.className='pill '+(['green','blue','coral'][i%3]);p.textContent=x;E.dnaPills.appendChild(p)});
+    E.dnaScore.textContent=`${S.metrics.score}/100 PULSE`;
+  }
+
+  function renderSkills(){
+    E.skills.replaceChildren();
+    const entries=Object.entries(S.languages||{}).sort((a,b)=>n(b[1])-n(a[1])).slice(0,8);
+    const max=entries[0]?.[1]||1;
+    if(!entries.length){E.skills.innerHTML='<div class="empty-intel">NO LANGUAGE SIGNAL AVAILABLE</div>';return}
+    entries.forEach(([lang,val])=>{
+      const row=document.createElement('div');row.className='bar-row';
+      row.innerHTML=`<span>${esc(lang)}</span><span class="bar-track"><span class="bar-fill" style="width:${Math.max(5,(n(val)/max)*100)}%;background:${colorFor(lang)}"></span></span><b>${Math.round(n(val)/max*100)}</b>`;
+      E.skills.appendChild(row);
+    });
+  }
+
+  function renderPortfolio(){
+    const rs=originalRepos();
+    const boxes=[
+      ['FLAGSHIPS',rs.filter(r=>n(r.stargazers_count)>=50).length],
+      ['HIDDEN GEMS',findGems().length],
+      ['EXPERIMENTS',rs.filter(r=>n(r.stargazers_count)<5 && !fresh(r)).length],
+      ['DORMANT',rs.filter(r=>daysSince(r.pushed_at)>365).length],
+      ['FORKS',S.repos.filter(r=>r.fork).length],
+      ['ACTIVE',rs.filter(fresh).length]
+    ];
+    E.portfolio.replaceChildren();
+    boxes.forEach(([label,val])=>{const b=document.createElement('div');b.className='portfolio-box';b.innerHTML=`<b>${fmt(val)}</b><span>${label}</span>`;E.portfolio.appendChild(b)});
+  }
+
+  function renderHealth(){
+    const rs=[...originalRepos()].sort((a,b)=>health(b)-health(a)).slice(0,6);
+    E.health.replaceChildren();
+    if(!rs.length){E.health.innerHTML='<div class="empty-intel">NO ORIGINAL REPOSITORIES</div>';return}
+    rs.forEach(r=>{
+      const h=health(r),wrap=document.createElement('div');wrap.className='health-row';
+      wrap.innerHTML=`<div><div class="health-name">${esc(r.name)}</div><div class="health-meter"><span style="width:${h}%"></span></div><div class="intel-sub">${h>=75?'HEALTHY':h>=50?'NEEDS ATTENTION':h>=25?'AGING':'DORMANT'} · ${rel(r.pushed_at)}</div></div><strong>${h}</strong>`;
+      E.health.appendChild(wrap);
+    });
+  }
+
+  function renderGrowth(){
+    const rs=originalRepos(), years={};
+    rs.forEach(r=>{const y=r.created_at?new Date(r.created_at).getFullYear():'—';years[y]=(years[y]||0)+1});
+    const entries=Object.entries(years).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
+    const peak=Math.max(...entries.map(([,v])=>v),1);
+    E.growth.replaceChildren();
+    entries.forEach(([year,count])=>{const d=document.createElement('div');d.className='timeline-item '+(count===peak?'peak':'');d.innerHTML=`<div class="timeline-year">${esc(year)}</div><div class="timeline-count">${count} ${count===1?'REPOSITORY':'REPOSITORIES'} CREATED</div>`;E.growth.appendChild(d)});
+    E.journeyRange.textContent=entries.length?`${entries[0][0]} → ${entries.at(-1)[0]}`:'NO RANGE';
+    const byYear={};
+    rs.forEach(r=>{const y=r.created_at?new Date(r.created_at).getFullYear():'—';(byYear[y]??=[]).push(r.language||'Unknown')});
+    E.journey.replaceChildren();
+    Object.entries(byYear).sort((a,b)=>a[0]-b[0]).forEach(([year,langs])=>{
+      const d=document.createElement('div');d.className='timeline-item';
+      const unique=[...new Set(langs)].slice(0,3).join(' · ');
+      d.innerHTML=`<div class="timeline-year">${esc(year)}</div><div class="timeline-count">${esc(unique||'No language metadata')}</div>`;
+      E.journey.appendChild(d);
+    });
+  }
+
+  function findGems(){
+    return originalRepos().filter(r=>n(r.stargazers_count)<100 && !r.archived).map(r=>({...r,_gem:potential(r)}))
+      .filter(r=>r._gem>=35).sort((a,b)=>b._gem-a._gem).slice(0,6);
+  }
+
+  function renderRadar(){
+    const gems=findGems();
+    E.gems.replaceChildren();
+    if(!gems.length) E.gems.innerHTML='<div class="empty-intel">NO STRONG HIDDEN-GEM SIGNAL FOUND</div>';
+    gems.forEach(r=>{const d=document.createElement('div');d.className='radar-row';d.innerHTML=`<div><div class="radar-name">${esc(r.name)}</div><div class="intel-sub">${fmt(r.stargazers_count)} stars · ${fmt(r.forks_count)} forks · ${rel(r.pushed_at)}</div></div><strong class="radar-score">${r._gem}</strong>`;E.gems.appendChild(d)});
+
+    const revival=originalRepos().filter(r=>!r.archived && daysSince(r.pushed_at)>180 && daysSince(r.pushed_at)<1800 && (n(r.stargazers_count)>10||n(r.forks_count)>2))
+      .map(r=>({...r,_rev:Math.min(100,Math.round(Math.log1p(n(r.stargazers_count))*18+Math.log1p(n(r.forks_count))*10+(r.description?10:0)))}))
+      .sort((a,b)=>b._rev-a._rev).slice(0,6);
+    E.revival.replaceChildren();
+    if(!revival.length) E.revival.innerHTML='<div class="empty-intel">NO PROJECTS NEEDING A STRONG REVIVAL SIGNAL</div>';
+    revival.forEach(r=>{const d=document.createElement('div');d.className='radar-row';d.innerHTML=`<div><div class="radar-name">${esc(r.name)}</div><div class="intel-sub">${fmt(r.stargazers_count)} stars · last update ${rel(r.pushed_at)}</div></div><strong class="radar-score">${r._rev}</strong>`;E.revival.appendChild(d)});
+
+    const top=originalRepos().map(r=>({...r,_p:potential(r)})).sort((a,b)=>b._p-a._p).slice(0,8);
+    E.potential.replaceChildren();
+    top.forEach(r=>{const d=document.createElement('div');d.className='health-row';d.innerHTML=`<div><div class="health-name">${esc(r.name)}</div><div class="health-meter"><span style="width:${r._p}%;background:var(--blue)"></span></div><div class="intel-sub">${r._p>=75?'HIGH POTENTIAL':r._p>=50?'PROMISING':'EARLY SIGNAL'} · ${fmt(r.stargazers_count)} stars · ${fmt(r.forks_count)} forks</div></div><strong>${r._p}</strong>`;E.potential.appendChild(d)});
+  }
+
+  function renderTechnicalSelectors(){
+    const rs=originalRepos();
+    E.techRepo.replaceChildren();
+    E.battleA.replaceChildren();E.battleB.replaceChildren();
+    if(!rs.length){
+      E.techRepo.innerHTML='<option value="">No repositories</option>';
+      E.battleA.innerHTML=E.battleB.innerHTML='<option value="">No repositories</option>';
+      return;
+    }
+    rs.forEach((r,i)=>{
+      const opt=document.createElement('option');opt.value=r.full_name||r.name;opt.textContent=r.name;E.techRepo.appendChild(opt);
+      const a=opt.cloneNode(true),b=opt.cloneNode(true);E.battleA.appendChild(a);E.battleB.appendChild(b);
+    });
+    if(rs.length>1)E.battleB.selectedIndex=1;
+  }
+
+  function renderHygiene(){
+    const rs=originalRepos();
+    const checks=[
+      ['DESCRIPTION',rs.filter(r=>r.description).length,rs.length],
+      ['LICENSE',rs.filter(r=>r.license).length,rs.length],
+      ['ISSUES ENABLED',rs.filter(r=>r.has_issues).length,rs.length],
+      ['HOMEPAGE',rs.filter(r=>r.homepage).length,rs.length],
+      ['NOT ARCHIVED',rs.filter(r=>!r.archived).length,rs.length]
+    ];
+    E.hygiene.replaceChildren();
+    checks.forEach(([label,v,total])=>{const pct=total?Math.round(v/total*100):0;const row=document.createElement('div');row.className='bar-row';row.innerHTML=`<span>${label}</span><span class="bar-track"><span class="bar-fill" style="width:${pct}%;background:var(--green)"></span></span><b>${pct}%</b>`;E.hygiene.appendChild(row)});
+    const grave=rs.filter(r=>daysSince(r.pushed_at)>365).sort((a,b)=>daysSince(b.pushed_at)-daysSince(a.pushed_at)).slice(0,7);
+    E.graveyard.replaceChildren();
+    if(!grave.length){E.graveyard.innerHTML='<div class="empty-intel">NO DORMANT PROJECTS FOUND</div>';return}
+    grave.forEach(r=>{const d=document.createElement('div');d.className='health-row';d.innerHTML=`<div><div class="health-name">${esc(r.name)}</div><div class="intel-sub">${rel(r.pushed_at)} · ${fmt(r.stargazers_count)} stars</div></div><span class="repo-badge">DORMANT</span>`;E.graveyard.appendChild(d)});
+  }
+
+  async function scanTechnical(){
+    const full=E.techRepo.value;
+    if(!full){return}
+    const [owner,name]=full.split('/');
+    E.scanTech.disabled=true;E.scanTech.textContent='SCANNING...';E.techOutput.textContent='Reading public repository manifests...';E.deps.replaceChildren();
+    const manifests=[
+      ['package.json','NODE / JAVASCRIPT','dependencies'],
+      ['requirements.txt','PYTHON','requirements'],
+      ['pyproject.toml','PYTHON','toml'],
+      ['Cargo.toml','RUST','toml'],
+      ['go.mod','GO','go'],
+      ['pom.xml','JAVA','xml'],
+      ['composer.json','PHP','json']
+    ];
+    const found=[];
+    try{
+      for(const [file,kind] of manifests){
+        const url=`https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/contents/${encodeURIComponent(file)}`;
+        const res=await fetch(url,{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10'}});
+        if(!res.ok)continue;
+        const data=await res.json();
+        if(data?.content){
+          const text=atob(String(data.content).replace(/\s/g,''));
+          found.push({file,kind,text});
+        }
+        if(found.length>=3)break;
+      }
+      if(!found.length){E.techOutput.textContent='No supported manifest was found in the repository root. This does not mean the project has no dependencies.';return}
+      E.techOutput.textContent=`Found ${found.length} public manifest${found.length>1?'s':''}. Showing a lightweight dependency snapshot.`;
+      found.forEach(x=>renderManifest(x));
+    }catch(err){
+      E.techOutput.textContent='Technical scan failed. GitHub may have rate-limited this browser or the repository contents may be unavailable.';
+    }finally{E.scanTech.disabled=false;E.scanTech.textContent='SCAN PROJECT'}
+  }
+
+  function renderManifest(x){
+    const group=document.createElement('div');group.className='dep-group';
+    const root=document.createElement('div');root.className='dep-root';root.textContent=`${x.kind} · ${x.file}`;group.appendChild(root);
+    let items=[];
+    try{
+      if(x.file==='package.json'||x.file==='composer.json'){
+        const j=JSON.parse(x.text);
+        items=[...Object.entries(j.dependencies||{}),...Object.entries(j.devDependencies||{})].slice(0,30).map(([k,v])=>[k,v]);
+      }else if(x.file==='requirements.txt'){
+        items=x.text.split(/\r?\n/).map(s=>s.trim()).filter(s=>s&&!s.startsWith('#')).slice(0,30).map(s=>[s,'']);
+      }else if(x.file==='go.mod'){
+        items=x.text.split(/\r?\n/).filter(s=>s.trim().startsWith('require')).concat(x.text.split(/\r?\n/).filter(s=>/^\s+[\w./-]+\s+v/.test(s))).slice(0,30).map(s=>[s.trim(),'']);
+      }else{
+        items=x.text.split(/\r?\n/).filter(s=>/(dependencies|version|crate|require|artifactId|groupId)/i.test(s)).slice(0,20).map(s=>[s.trim(),'']);
+      }
+    }catch{}
+    if(!items.length)items=[['Manifest detected','Parsed dependency list unavailable','']];
+    items.forEach(([name,version])=>{const item=document.createElement('div');item.className='dep-item';item.innerHTML=`<span>${esc(name)}</span><b>${esc(version)}</b>`;group.appendChild(item)});
+    E.deps.appendChild(group);
+  }
+
+  async function fetchUserMini(username){
+    const res=await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`,{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10'}});
+    if(!res.ok)throw new Error(res.status===404?'USER NOT FOUND':`GITHUB ${res.status}`);
+    const user=await res.json();
+    const rr=await fetch(`https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=100&sort=pushed&direction=desc`,{headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2026-03-10'}});
+    if(!rr.ok)throw new Error(`GITHUB ${rr.status}`);
+    return {user,repos:await rr.json()};
+  }
+
+  function miniScore(user,repos){
+    const stars=repos.reduce((a,r)=>a+n(r.stargazers_count),0),forks=repos.reduce((a,r)=>a+n(r.forks_count),0),active=repos.filter(fresh).length;
+    return Math.max(0,Math.min(100,Math.round(Math.min(25,Math.log1p(n(user.public_repos))*7)+Math.min(22,Math.log1p(n(user.followers))*4)+Math.min(25,Math.log1p(stars)*4.5)+Math.min(12,Math.log1p(forks)*3.5)+Math.min(12,active*2))));
+  }
+
+  async function compareUsers(){
+    const a=E.compareA.value.trim(),b=E.compareB.value.trim();
+    if(!a||!b){E.compareOut.innerHTML='<div class="empty-intel">ENTER TWO GITHUB USERNAMES</div>';return}
+    E.compareBtn.disabled=true;E.compareBtn.textContent='FETCHING...';
+    E.compareOut.innerHTML='<div class="empty-intel">Fetching both public profiles...</div>';
+    try{
+      const [A,B]=await Promise.all([fetchUserMini(a),fetchUserMini(b)]);
+      const sa=miniScore(A.user,A.repos),sb=miniScore(B.user,B.repos),winner=sa===sb?'DRAW':sa>sb?a:b;
+      const rows=[
+        ['GitPulse Score',sa,sb],['Public Repositories',A.user.public_repos,B.user.public_repos],
+        ['Followers',A.user.followers,B.user.followers],
+        ['Stars',A.repos.reduce((x,r)=>x+n(r.stargazers_count),0),B.repos.reduce((x,r)=>x+n(r.stargazers_count),0)],
+        ['Forks',A.repos.reduce((x,r)=>x+n(r.forks_count),0),B.repos.reduce((x,r)=>x+n(r.forks_count),0)],
+        ['Active Repositories',A.repos.filter(fresh).length,B.repos.filter(fresh).length]
+      ];
+      E.compareOut.innerHTML=`<div class="battle"><div class="battle-side ${winner===a?'winner':''}"><div class="intel-title">${esc(A.user.name||a)}</div><div class="intel-sub">@${esc(A.user.login)}</div><div class="radar-score">${sa}/100</div></div><div class="battle-vs">VS</div><div class="battle-side ${winner===b?'winner':''}"><div class="intel-title">${esc(B.user.name||b)}</div><div class="intel-sub">@${esc(B.user.login)}</div><div class="radar-score">${sb}/100</div></div></div>
+        <table class="compare-table" style="margin-top:14px"><thead><tr><th>Metric</th><th>${esc(a)}</th><th>${esc(b)}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])}</td><td>${fmt(r[2])}</td></tr>`).join('')}</tbody></table>
+        <div class="note-box">${winner==='DRAW'?'This one is a draw on the GitPulse composite.':'🏆 Current composite winner: '+esc(winner)}. The score is a heuristic, not a GitHub ranking.</div>`;
+    }catch(err){E.compareOut.innerHTML=`<div class="empty-intel">${esc(err.message||'COMPARE FAILED')}</div>`}
+    finally{E.compareBtn.disabled=false;E.compareBtn.textContent='BATTLE ⚔'}
+  }
+
+  function renderBattleSelectors(){
+    const rs=originalRepos();
+    if(rs.length<2){E.battleOut.innerHTML='<div class="empty-intel">AT LEAST TWO ORIGINAL REPOSITORIES ARE NEEDED.</div>';return}
+  }
+
+  function battleRepos(){
+    const a=originalRepos().find(r=>(r.full_name||r.name)===E.battleA.value),b=originalRepos().find(r=>(r.full_name||r.name)===E.battleB.value);
+    if(!a||!b||a===b){E.battleOut.innerHTML='<div class="empty-intel">CHOOSE TWO DIFFERENT REPOSITORIES.</div>';return}
+    const metrics=[['Potential',potential(a),potential(b)],['Health',health(a),health(b)],['Stars',n(a.stargazers_count),n(b.stargazers_count)],['Forks',n(a.forks_count),n(b.forks_count)],['Open Issues',n(a.open_issues_count),n(b.open_issues_count)]];
+    let aw=0,bw=0;metrics.forEach(([,x,y])=>{if(x>y)aw++;if(y>x)bw++});
+    E.battleOut.innerHTML=`<div class="battle"><div class="battle-side ${aw>=bw?'winner':''}"><div class="intel-title">${esc(a.name)}</div><div class="intel-sub">${rel(a.pushed_at)}</div><div class="radar-score">${potential(a)}/100</div></div><div class="battle-vs">VS</div><div class="battle-side ${bw>aw?'winner':''}"><div class="intel-title">${esc(b.name)}</div><div class="intel-sub">${rel(b.pushed_at)}</div><div class="radar-score">${potential(b)}/100</div></div></div>
+    <table class="compare-table" style="margin-top:14px"><thead><tr><th>Metric</th><th>${esc(a.name)}</th><th>${esc(b.name)}</th></tr></thead><tbody>${metrics.map(r=>`<tr><td>${r[0]}</td><td>${fmt(r[1])}</td><td>${fmt(r[2])}</td></tr>`).join('')}</tbody></table>`;
+  }
+
+  function renderReport(){
+    const rs=originalRepos(), languages=Object.keys(S.languages||{}).length;
+    const cards=[['PULSE',S.metrics.score+'/100'],['PROJECTS',rs.length],['STARS',fmt(S.metrics.stars)],['FORKS',fmt(S.metrics.forks)],['ACTIVE',rs.filter(fresh).length],['LANGUAGES',languages]];
+    E.snapshot.replaceChildren();
+    cards.forEach(([x,v])=>{const d=document.createElement('div');d.className='portfolio-box';d.innerHTML=`<b>${esc(v)}</b><span>${x}</span>`;E.snapshot.appendChild(d)});
+    const d=classifyDNA();
+    E.reportNote.textContent=`${d.type}: ${d.copy} Hidden Gems: ${findGems().length}. This report is generated entirely in your browser from public GitHub API data. No GitPulse backend or database is used.`;
+  }
+
+  function showTab(name){
+    E.tabs.forEach(t=>t.classList.toggle('active',t.dataset.intelTab===name));
+    E.panels.forEach(p=>p.classList.toggle('active',p.dataset.intelPanel===name));
+    try{localStorage.setItem('gitpulse_intel_tab',name)}catch{}
+  }
+
+  function renderAll(){
+    if(!S.user)return;
+    E.root.hidden=false;
+    renderDNA();renderSkills();renderPortfolio();renderHealth();renderGrowth();renderRadar();
+    renderTechnicalSelectors();renderHygiene();renderReport();
+    const last=(()=>{try{return localStorage.getItem('gitpulse_intel_tab')}catch{return null}})();
+    showTab(last||'overview');
+  }
+
+  E.tabs.forEach(t=>t.addEventListener('click',()=>showTab(t.dataset.intelTab)));
+  E.scanTech.addEventListener('click',scanTechnical);
+  E.compareBtn.addEventListener('click',compareUsers);
+  E.battleBtn.addEventListener('click',battleRepos);
+  E.print.addEventListener('click',()=>window.print());
+
+  // Hook into the existing app while preserving every original feature.
+  const originalRender = window.renderResults;
+  if (typeof originalRender === 'function') {
+    window.renderResults = function(){
+      originalRender();
+      renderAll();
+    };
+  }
+
+  // The original function is scoped, so wrap the public state with a polling observer.
+  // This is intentionally tiny and only runs while a profile exists.
+  let lastLogin='';
+  setInterval(()=>{
+    if(S.user && S.user.login!==lastLogin){
+      lastLogin=S.user.login;
+      renderAll();
+    }
+  },250);
+
+  window.GitPulse2 = {renderAll,scanTechnical,compareUsers};
+})();
+</script>
+
 </body>
 </html>
