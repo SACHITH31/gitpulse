@@ -934,7 +934,7 @@ async function loadUser(username,{force=false}={}){
   const cached=!force?readCache(username):null;
   if(cached){
     state.user=cached.user;state.repos=cached.repos;state.languages=cached.languages||{};state.languageReposAnalyzed=cached.languageReposAnalyzed||0;
-    state.metrics=computeAnalytics(state.user,state.repos);saveRecent(username);updateUrl(username,false);renderResults();setView('results');return;
+    state.metrics=computeAnalytics(state.user,state.repos);saveRecent(username);updateUrl(username,false);window.renderResults();setView('results');return;
   }
   startLoading();
   setFetchBusy(true);
@@ -947,7 +947,7 @@ async function loadUser(username,{force=false}={}){
     state.user=base.user;state.repos=base.repos;state.languages=lang.map;state.languageReposAnalyzed=lang.analyzed;
     state.metrics=computeAnalytics(state.user,state.repos);
     writeCache(username,{user:state.user,repos:state.repos,languages:state.languages,languageReposAnalyzed:state.languageReposAnalyzed});
-    saveRecent(username);updateUrl(username,true);loadingStep(3);renderResults();setView('results');
+    saveRecent(username);updateUrl(username,true);loadingStep(3);window.renderResults();setView('results');
   }catch(err){
     if(err?.name==='AbortError')return;
     const title=err?.title||'NETWORK ERROR';
@@ -1179,6 +1179,10 @@ function init(){
   const param=new URLSearchParams(location.search).get('user');
   if(param){DOM.input.value=param;search(param)}
 }
+window.colorFor = colorFor;
+window.formatNumber = formatNumber;
+window.formatRelative = formatRelative;
+window.renderResults = renderResults;
 init();
 })();
 </script>
@@ -1521,12 +1525,19 @@ init();
     window.renderResults = function(){
       originalRender();
       renderAll();
+      if (window.GitPulse3 && typeof window.GitPulse3.render === 'function') {
+        window.GitPulse3.render();
+      }
     };
   }
 
   // The original function is scoped, so wrap the public state with a polling observer.
   // This is intentionally tiny and only runs while a profile exists.
   let lastLogin='';
+  if (S.user) {
+    lastLogin = S.user.login;
+    renderAll();
+  }
   setInterval(()=>{
     if(S.user && S.user.login!==lastLogin){
       lastLogin=S.user.login;
@@ -1562,7 +1573,7 @@ function universe(){const c=q('gp3-universe-canvas'),box=c.parentElement,w=box.c
 function cards(){const u=S.user,sc=S.metrics.score,n=u.name||u.login;q('gp3-share-cards').innerHTML=[['gp3-share-card',`<h3>${esc(n)}</h3><div>@${esc(u.login)}</div><div class="gp3-share-score">${sc}</div><small>GITPULSE SCORE</small>`],['gp3-share-card dark',`<h3>GITPULSE // PROFILE</h3><div>REPOS ${fmt(u.public_repos)} · STARS ${fmt(S.metrics.stars)}</div><div class="gp3-share-score">${sc}/100</div>`],['gp3-share-card yellow',`<h3>DEVELOPER PULSE</h3><div>${dna()}</div><div class="gp3-share-score">${sc}</div>`]].map((x,i)=>`<div class="${x[0]}" data-card="${i}">${x[1]}</div>`).join('')}
 function downloadCard(){const c=q('gp3-share-cards').querySelector('[data-card="0"]'),r=c.getBoundingClientRect(),k=2,cv=document.createElement('canvas');cv.width=r.width*k;cv.height=r.height*k;const x=cv.getContext('2d');x.scale(k,k);x.fillStyle='#f4f4f0';x.fillRect(0,0,r.width,r.height);x.fillStyle='#121212';x.font='700 22px Space Grotesk';x.fillText(S.user.name||S.user.login,20,40);x.font='700 15px Inter';x.fillText('@'+S.user.login,20,68);x.font='700 58px Space Grotesk';x.fillStyle='#ff6b6b';x.fillText(S.metrics.score,20,132);x.font='700 11px Inter';x.fillStyle='#121212';x.fillText('GITPULSE SCORE',20,152);const a=document.createElement('a');a.download=`GitPulse-${S.user.login}-card.png`;a.href=cv.toDataURL('image/png');a.click()}
 function all(){if(!S.user)return;root.hidden=false;career();balance();fingerprint();achievements();milestones();heat();experiments();gaps();simulator();maturity();graph();collections();searchRepos();cleanup();battleSelectors();renderSnaps();universe();cards()}
-A('.gp3-tab').forEach(b=>b.onclick=()=>{A('.gp3-tab').forEach(x=>x.classList.toggle('active',x===b));A('.gp3-panel').forEach(x=>x.classList.toggle('active',x.dataset.gp3Panel===b.dataset.gp3))});q('gp3-repo-search').oninput=searchRepos;q('gp3-repo-filter').onchange=searchRepos;q('gp3-repo-battle').onclick=battleRepos;q('gp3-user-battle').onclick=battleUsers;q('gp3-snapshot').onclick=saveSnap;q('gp3-download-card').onclick=downloadCard;q('gp3-clear-cache').onclick=()=>{if(confirm('Clear GitPulse cached profiles, recent searches and local snapshots?')){Object.keys(localStorage).filter(k=>k.startsWith('gitpulse:')||['gitpulse_recent','gitpulse_snapshots'].includes(k)).forEach(k=>localStorage.removeItem(k));location.reload()}};addEventListener('resize',()=>S.user&&universe());let last='';setInterval(()=>{if(S.user&&S.user.login!==last){last=S.user.login;all()}},300);window.GitPulse3={render:all}})();
+A('.gp3-tab').forEach(b=>b.onclick=()=>{A('.gp3-tab').forEach(x=>x.classList.toggle('active',x===b));A('.gp3-panel').forEach(x=>x.classList.toggle('active',x.dataset.gp3Panel===b.dataset.gp3))});q('gp3-repo-search').oninput=searchRepos;q('gp3-repo-filter').onchange=searchRepos;q('gp3-repo-battle').onclick=battleRepos;q('gp3-user-battle').onclick=battleUsers;q('gp3-snapshot').onclick=saveSnap;q('gp3-download-card').onclick=downloadCard;q('gp3-clear-cache').onclick=()=>{if(confirm('Clear GitPulse cached profiles, recent searches and local snapshots?')){Object.keys(localStorage).filter(k=>k.startsWith('gitpulse:')||['gitpulse_recent','gitpulse_snapshots'].includes(k)).forEach(k=>localStorage.removeItem(k));location.reload()}};addEventListener('resize',()=>S.user&&universe());let last='';if (S.user) { last = S.user.login; all(); }setInterval(()=>{if(S.user&&S.user.login!==last){last=S.user.login;all()}},300);window.GitPulse3={render:all}})();
 </script>
 </body>
 </html>
