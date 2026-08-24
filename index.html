@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="GitPulse generates a shareable developer passport from public GitHub data.">
+<title>GitPulse | Developer Identity Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+:root{
+  --bg:#f4f4f0;--surface:#fff;--surface-2:#e9e9e3;--text:#121212;--muted:#626262;
+  --border:#121212;--shadow:#121212;--yellow:#ffd93d;--coral:#ff6b6b;--blue:#4d96ff;
+  --green:#6bcb77;--purple:#9d4edd;--cyan:#38bdf8;--danger:#d92d20;
+  --focus:#005fcc;--grid:rgba(18,18,18,.055)
+}
+[data-theme="dark"]{
+  --bg:#171717;--surface:#242424;--surface-2:#303030;--text:#f4f4f0;--muted:#aaa;
+  --border:#f4f4f0;--shadow:#ffd93d;--yellow:#ffd93d;--coral:#ff6b6b;--blue:#4d96ff;
+  --green:#6bcb77;--purple:#c77dff;--cyan:#38bdf8;--grid:rgba(244,244,240,.06)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+body.modal-open{overflow:hidden}
+h1,h2,h3,h4,h5,h6,.display,.mono{font-family:"Space Grotesk",system-ui,sans-serif}
+button,input{font:inherit}
+button,a{touch-action:manipulation}
+a{color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+::selection{background:var(--yellow);color:#121212}
+
+.site-header{
+  position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:3px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:14px clamp(16px,4vw,48px)
+}
+.logo{display:inline-flex;align-items:center;gap:12px;text-decoration:none;font-family:"Space Grotesk";font-weight:700}
+.logo-mark{background:var(--coral);color:#fff;border:2px solid var(--border);box-shadow:3px 3px 0 var(--shadow);padding:5px 9px;font-size:1.1rem}
+.logo-name{font-size:1.35rem;letter-spacing:-.04em}
+.header-actions{display:flex;align-items:center;gap:10px}
+.api-badge,.tag{
+  display:inline-flex;align-items:center;gap:7px;border:2px solid var(--border);background:var(--yellow);
+  color:#121212;padding:5px 9px;font:700 .72rem "Space Grotesk";letter-spacing:.06em;text-transform:uppercase
+}
+.api-badge.warn{background:var(--coral);color:#fff}
+.api-badge.ok{background:var(--green)}
+.theme-btn,.icon-btn{
+  border:2px solid var(--border);background:var(--surface);color:var(--text);box-shadow:3px 3px 0 var(--shadow);
+  padding:8px 11px;font-weight:700
+}
+.theme-btn:hover,.icon-btn:hover{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--shadow)}
+
+main{width:min(1420px,100%);margin:auto;padding:34px clamp(14px,3vw,32px) 56px}
+.view{display:none}
+.view.active{display:block;animation:enter .22s ease}
+@keyframes enter{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+
+.hero{
+  position:relative;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(330px,.95fr);
+  gap:clamp(30px,5vw,76px);align-items:center;min-height:690px;overflow:hidden
+}
+.hero:before{
+  content:"";position:absolute;inset:0;z-index:-1;opacity:.65;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;mask-image:linear-gradient(90deg,#000,transparent 82%)
+}
+.hero-copy{max-width:760px}
+.eyebrow{margin-bottom:18px}
+.hero h1{font-size:clamp(3.3rem,8vw,8rem);line-height:.84;letter-spacing:-.07em;text-transform:uppercase}
+.hero h1 .highlight{display:inline-block;background:var(--yellow);border:4px solid var(--border);box-shadow:7px 7px 0 var(--shadow);padding:0 .12em;transform:rotate(-1deg)}
+.hero-sub{max-width:660px;margin:30px 0;color:var(--muted);font-size:clamp(1rem,1.5vw,1.25rem);line-height:1.6}
+.search-panel{display:flex;gap:10px;max-width:700px}
+.input-wrap{position:relative;flex:1}
+.search-input{
+  width:100%;min-height:58px;border:3px solid var(--border);background:var(--surface);color:var(--text);
+  box-shadow:5px 5px 0 var(--shadow);padding:13px 16px;font-family:"Space Grotesk";font-size:1rem
+}
+.search-input:focus{transform:translate(2px,2px);box-shadow:3px 3px 0 var(--shadow);outline:none}
+.btn{
+  min-height:48px;border:3px solid var(--border);background:var(--yellow);color:#121212;box-shadow:5px 5px 0 var(--shadow);
+  padding:11px 18px;font-family:"Space Grotesk";font-weight:700;letter-spacing:.025em;text-transform:uppercase;
+  text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px
+}
+.btn:hover{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--shadow)}
+.btn:active{transform:translate(5px,5px);box-shadow:none}
+.btn.blue{background:var(--blue);color:#fff}.btn.coral{background:var(--coral);color:#fff}.btn.green{background:var(--green)}
+.btn.dark{background:var(--text);color:var(--bg)}
+.btn.small{min-height:40px;padding:8px 12px;font-size:.8rem;box-shadow:3px 3px 0 var(--shadow)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:5px 5px 0 var(--shadow)}
+.hints{margin-top:13px;color:var(--muted);font-size:.78rem;font-weight:700}
+.recent{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.recent-label{font:700 .72rem "Space Grotesk";letter-spacing:.08em}
+.recent-chip{border:2px solid var(--border);background:var(--surface);padding:5px 9px;font:700 .75rem "Space Grotesk";box-shadow:2px 2px 0 var(--shadow)}
+.recent-chip:hover{background:var(--yellow)}
+.clear-history{border:0;background:transparent;color:var(--muted);font-size:.72rem;font-weight:700;text-decoration:underline;padding:5px}
+
+.hero-art{position:relative;min-height:570px;display:grid;place-items:center}
+.deco{position:absolute;border:3px solid var(--border);font:700 .68rem "Space Grotesk";padding:7px 9px;background:var(--surface);box-shadow:4px 4px 0 var(--shadow)}
+.deco.a{top:4%;right:5%;transform:rotate(4deg)}.deco.b{bottom:8%;left:2%;background:var(--blue);color:#fff;transform:rotate(-5deg)}
+.deco.c{top:18%;left:0;background:var(--coral);color:#fff;transform:rotate(-8deg)}
+.preview-card{
+  width:min(510px,90%);background:var(--surface);border:4px solid var(--border);box-shadow:12px 12px 0 var(--shadow);
+  padding:28px;transform:rotate(2deg);position:relative
+}
+.preview-card:after{content:"";position:absolute;inset:10px;border:1px solid var(--border);opacity:.25;pointer-events:none}
+.preview-top,.passport-top{display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--border);padding-bottom:14px}
+.preview-main{display:flex;gap:18px;align-items:center;padding:24px 0}
+.preview-avatar{width:88px;height:88px;object-fit:cover;border:3px solid var(--border);background:var(--blue);display:grid;place-items:center;font:700 1.5rem "Space Grotesk"}
+.preview-name{font:700 1.35rem "Space Grotesk"}.preview-handle{color:var(--muted);font-weight:600}
+.preview-bio{border:2px solid var(--border);padding:13px;background:var(--bg);font-size:.85rem;line-height:1.45}
+.preview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.preview-stat{border:2px solid var(--border);padding:10px;text-align:center;background:var(--surface-2)}
+.preview-stat b{display:block;font:700 1.2rem "Space Grotesk"}.preview-stat span{font-size:.62rem;font-weight:700;color:var(--muted)}
+
+.loading-shell{min-height:620px;display:grid;place-items:center;text-align:center}
+.loader-box{width:min(650px,100%);border:4px solid var(--border);background:var(--surface);box-shadow:10px 10px 0 var(--shadow);padding:34px}
+.loader-square{width:74px;height:74px;border:4px solid var(--border);background:var(--yellow);box-shadow:6px 6px 0 var(--shadow);animation:loader 1s infinite alternate ease-in-out;margin:0 auto 28px}
+@keyframes loader{to{transform:rotate(180deg) scale(1.08);background:var(--coral)}}
+.loading-title{font:700 clamp(1.5rem,4vw,2.5rem) "Space Grotesk";text-transform:uppercase}
+.loading-sub{margin:9px 0 25px;color:var(--muted)}
+.steps{display:grid;gap:8px;text-align:left}
+.step{border:2px solid var(--border);padding:10px 12px;background:var(--surface-2);display:flex;justify-content:space-between;font:700 .8rem "Space Grotesk"}
+.step.active{background:var(--yellow);color:#121212}.step.done{background:var(--green);color:#121212}
+
+.error-shell{min-height:620px;display:grid;place-items:center}
+.error-card{width:min(680px,100%);background:var(--coral);color:#fff;border:4px solid var(--border);box-shadow:10px 10px 0 var(--shadow);padding:38px}
+.error-card h2{font-size:clamp(2rem,5vw,3.5rem);line-height:.95;text-transform:uppercase;margin:20px 0 14px}
+.error-card p{font-size:1rem;line-height:1.55;max-width:560px}
+.error-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:25px}
+
+.dashboard-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+.dashboard-nav .actions{display:flex;gap:10px;flex-wrap:wrap}
+.dashboard-grid{display:grid;grid-template-columns:minmax(310px,390px) minmax(0,1fr);gap:26px}
+.card{background:var(--surface);border:3px solid var(--border);box-shadow:6px 6px 0 var(--shadow)}
+.passport{
+  padding:24px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:18px;min-height:610px
+}
+.passport:before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px
+}
+.passport>*{position:relative}
+.passport-brand{font:700 .68rem "Space Grotesk";letter-spacing:.08em}
+.passport-stamp{border:2px solid var(--border);padding:5px 8px;font:700 .65rem "Space Grotesk";background:var(--green);transform:rotate(-2deg)}
+.passport-profile{text-align:center;padding:12px 0 3px}
+.avatar-frame{width:124px;height:124px;margin:auto;position:relative}
+.passport-avatar{width:100%;height:100%;object-fit:cover;border:4px solid var(--border);box-shadow:5px 5px 0 var(--shadow);background:var(--blue)}
+.avatar-fallback{width:100%;height:100%;display:none;place-items:center;background:var(--blue);color:#fff;border:4px solid var(--border);box-shadow:5px 5px 0 var(--shadow);font:700 2.3rem "Space Grotesk"}
+.passport-name{font:700 1.65rem "Space Grotesk";margin-top:18px;word-break:break-word}
+.passport-handle{color:var(--muted);font-weight:700;margin-top:2px}
+.passport-bio{font-size:.87rem;line-height:1.45;margin-top:12px}
+.passport-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;border-top:3px solid var(--border);border-bottom:3px solid var(--border);padding:17px 0}
+.meta{border:2px solid var(--border);padding:10px;text-align:center;background:var(--bg)}
+.meta small{display:block;color:var(--muted);font:700 .61rem "Space Grotesk";text-transform:uppercase}.meta strong{display:block;font:700 1.15rem "Space Grotesk";margin-top:3px}
+.passport-foot{display:flex;justify-content:space-between;gap:10px;font:700 .65rem "Space Grotesk";color:var(--muted);text-transform:uppercase;margin-top:auto}
+.barcode{height:34px;border:2px solid var(--border);background:repeating-linear-gradient(90deg,var(--text) 0 2px,transparent 2px 5px, var(--text) 5px 6px,transparent 6px 9px)}
+
+.analytics{display:grid;gap:20px}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.metric{padding:20px;min-height:128px;display:flex;flex-direction:column;justify-content:space-between}
+.metric.yellow{background:color-mix(in srgb,var(--yellow) 22%,var(--surface))}.metric.coral{background:color-mix(in srgb,var(--coral) 18%,var(--surface))}
+.metric.blue{background:color-mix(in srgb,var(--blue) 18%,var(--surface))}
+.metric-label{font:700 .7rem "Space Grotesk";letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.metric-value{font:700 clamp(1.8rem,3vw,2.7rem) "Space Grotesk";line-height:1}
+.metric-note{font-size:.72rem;color:var(--muted);font-weight:600}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.score-card,.activity-card,.language-card{padding:22px}
+.score-row{display:flex;justify-content:space-between;align-items:end;gap:15px}
+.score-number{font:700 4rem/1 "Space Grotesk";color:var(--coral)}
+.score-meter{height:18px;border:3px solid var(--border);background:var(--surface-2);margin-top:17px}
+.score-meter span{display:block;height:100%;background:var(--coral);width:0;transition:width .5s ease}
+.activity-status{display:flex;align-items:center;gap:9px;font:700 1.25rem "Space Grotesk";margin:12px 0}
+.status-dot{width:16px;height:16px;border:2px solid var(--border);background:var(--green)}
+.activity-note{font-size:.8rem;color:var(--muted);line-height:1.45}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:14px}
+.section-title{font:700 1.05rem "Space Grotesk";text-transform:uppercase}
+.section-meta{font-size:.72rem;color:var(--muted);font-weight:700;text-align:right}
+.lang-bar{height:34px;display:flex;border:3px solid var(--border);box-shadow:3px 3px 0 var(--shadow);overflow:hidden;background:var(--surface-2)}
+.lang-seg{height:100%;min-width:2px}
+.lang-legend{display:flex;flex-wrap:wrap;gap:11px 17px;margin-top:15px}
+.lang-item{display:flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700}
+.lang-dot{width:12px;height:12px;border:2px solid var(--border)}
+.empty{border:2px dashed var(--border);padding:18px;color:var(--muted);font-weight:700;background:var(--surface-2)}
+
+.repos-wrap{margin-top:28px}
+.repos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:16px}
+.repo{padding:19px;display:flex;flex-direction:column;gap:15px;min-height:210px;text-decoration:none}
+.repo:hover{transform:translate(2px,2px);box-shadow:4px 4px 0 var(--shadow)}
+.repo-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.repo-name{font:700 1.1rem "Space Grotesk";overflow-wrap:anywhere}
+.repo-lang{border:2px solid var(--border);padding:4px 7px;background:var(--yellow);color:#121212;font:700 .62rem "Space Grotesk";white-space:nowrap}
+.repo-desc{font-size:.82rem;line-height:1.5;color:var(--muted);min-height:49px}
+.repo-tags{display:flex;flex-wrap:wrap;gap:6px}
+.repo-tag{font:700 .65rem "Space Grotesk";border:2px solid var(--border);padding:4px 6px;background:var(--surface-2)}
+.repo-foot{border-top:2px solid var(--border);padding-top:11px;display:flex;justify-content:space-between;gap:8px;font-size:.7rem;font-weight:700;color:var(--muted);margin-top:auto}
+
+.modal-backdrop{
+  position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:15px
+}
+.modal-backdrop.active{display:flex}
+.dialog{
+  width:min(820px,100%);max-height:92vh;overflow:auto;background:var(--surface);border:4px solid var(--border);
+  box-shadow:12px 12px 0 var(--shadow);padding:24px
+}
+.dialog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:3px solid var(--border);padding-bottom:14px;margin-bottom:18px}
+.dialog-head h2{font-size:1.4rem;text-transform:uppercase}
+.share-preview{border:3px solid var(--border);background:var(--bg);padding:18px;margin-bottom:18px}
+.share-mini{display:grid;grid-template-columns:100px 1fr auto;gap:15px;align-items:center}
+.share-avatar{width:92px;height:92px;object-fit:cover;border:3px solid var(--border);background:var(--blue)}
+.share-mini h3{font:700 1.3rem "Space Grotesk"}.share-mini p{color:var(--muted);font-size:.8rem;font-weight:600}
+.share-score{font:700 2rem "Space Grotesk";color:var(--coral);text-align:right}
+.share-field{display:grid;gap:7px;margin:14px 0}
+.share-field label{font:700 .72rem "Space Grotesk";text-transform:uppercase}
+.code-box{border:2px solid var(--border);background:var(--surface-2);padding:12px;font:500 .72rem/1.45 ui-monospace,SFMono-Regular,monospace;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.share-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+#export-target{
+  position:fixed;left:-100000px;top:0;width:1200px;height:630px;background:#f4f4f0;color:#121212;
+  border:6px solid #121212;padding:48px;display:flex;flex-direction:column;justify-content:space-between;font-family:Inter,Arial,sans-serif
+}
+.export-head{display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #121212;padding-bottom:18px}
+.export-logo{display:flex;align-items:center;gap:12px;font:700 30px "Space Grotesk"}
+.export-gp{background:#ff6b6b;color:#fff;border:3px solid #121212;padding:6px 12px}
+.export-id{background:#ffd93d;border:3px solid #121212;padding:7px 12px;font:700 18px "Space Grotesk"}
+.export-body{display:grid;grid-template-columns:240px 1fr;gap:36px;align-items:center}
+.export-avatar{width:180px;height:180px;object-fit:cover;border:5px solid #121212;background:#4d96ff}
+.export-name{font:700 32px "Space Grotesk"}.export-handle{font-size:18px;color:#555;font-weight:700}
+.export-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.export-stat{background:#fff;border:3px solid #121212;padding:13px;text-align:center}.export-stat small{display:block;font-weight:700;font-size:11px;color:#666;text-transform:uppercase}.export-stat b{font:700 26px "Space Grotesk"}
+.export-bio{background:#fff;border:3px solid #121212;padding:16px;line-height:1.4;min-height:70px}
+.export-foot{border-top:3px solid #121212;padding-top:12px;display:flex;justify-content:space-between;font-weight:700;font-size:12px}
+
+footer{border-top:3px solid var(--border);background:var(--surface);padding:24px clamp(16px,4vw,48px);display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;font-size:.72rem;font-weight:700}
+footer a{font-weight:700}
+
+@media(max-width:1050px){
+  .hero{grid-template-columns:1fr}.hero-art{min-height:510px}.dashboard-grid{grid-template-columns:1fr}
+}
+@media(max-width:780px){
+  .metrics{grid-template-columns:1fr 1fr}.split{grid-template-columns:1fr}.share-mini{grid-template-columns:72px 1fr}.share-avatar{width:70px;height:70px}.share-score{grid-column:2;text-align:left}
+}
+@media(max-width:600px){
+  .site-header{padding:11px 13px}.logo-name{font-size:1.1rem}.api-badge{display:none}
+  main{padding-top:22px}.hero{min-height:auto}.hero h1{font-size:clamp(3rem,16vw,5.4rem)}
+  .search-panel{flex-direction:column}.search-input{min-height:54px}.btn{width:100%}.hero-art{min-height:440px}
+  .preview-card{padding:20px}.preview-stats{grid-template-columns:1fr 1fr}.preview-stats .preview-stat:last-child{grid-column:1/-1}
+  .passport{padding:19px}.metrics{grid-template-columns:1fr}.repos-grid{grid-template-columns:1fr}
+  .dashboard-nav .actions{width:100%}.dashboard-nav .actions .btn{flex:1}
+  .dialog{padding:17px}.share-actions{grid-template-columns:1fr}
+  footer{display:block}.footer-right{margin-top:8px}
+}
+@media(max-width:380px){
+  .passport-meta{grid-template-columns:1fr 1fr}.passport-foot{font-size:.56rem}.hero-art{min-height:390px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="#" id="logo-home" aria-label="GitPulse home"><span class="logo-mark">GP</span><span class="logo-name">GitPulse</span></a>
+  <div class="header-actions">
+    <span id="api-badge" class="api-badge" hidden>API —</span>
+    <button id="theme-btn" class="theme-btn" type="button" aria-label="Toggle color theme" aria-pressed="false">🌙 DARK</button>
+  </div>
+</header>
+
+<main>
+<section id="view-landing" class="view active" aria-labelledby="landing-title">
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="tag">● PUBLIC GITHUB DATA · NO LOGIN</span></div>
+      <h1 id="landing-title">YOUR CODE.<br>YOUR <span class="highlight">PULSE.</span></h1>
+      <p class="hero-sub">Turn a public GitHub profile into a collectible developer passport, repository intelligence, language analytics, and a share-ready identity card.</p>
+      <form id="search-form" class="search-panel" novalidate>
+        <div class="input-wrap">
+          <label class="sr-only" for="username-input">GitHub username</label>
+          <input id="username-input" class="search-input" maxlength="39" autocomplete="off" spellcheck="false" placeholder="Enter GitHub username, e.g. torvalds">
+        </div>
+        <button id="fetch-btn" class="btn" type="submit">FETCH STATS ⚡</button>
+      </form>
+      <div class="hints">Try: octocat · torvalds · gaearon · sindresorhus</div>
+      <div id="recent-searches" class="recent" hidden></div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <span class="deco a">PUBLIC DATA // 2026</span>
+      <span class="deco b">API / REST / JSON</span>
+      <span class="deco c">DEVELOPER ID</span>
+      <article class="preview-card">
+        <div class="preview-top"><span class="tag">GITPULSE PASSPORT</span><span class="mono" style="font-size:.7rem;font-weight:700">PUBLIC PROFILE</span></div>
+        <div class="preview-main">
+          <div class="preview-avatar">GP</div>
+          <div><div class="preview-name">Your Developer ID</div><div class="preview-handle">@username</div></div>
+        </div>
+        <div class="preview-bio">A public-data snapshot of your repositories, audience, activity signal, and coding footprint.</div>
+        <div class="preview-stats"><div class="preview-stat"><b>42</b><span>REPOS</span></div><div class="preview-stat"><b>8.7K</b><span>FOLLOWERS</span></div><div class="preview-stat"><b>87</b><span>PULSE</span></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="view-loading" class="view" aria-live="polite" aria-busy="true">
+  <div class="loading-shell">
+    <div class="loader-box">
+      <div class="loader-square" aria-hidden="true"></div>
+      <div id="loading-title" class="loading-title">CONNECTING TO GITHUB</div>
+      <p class="loading-sub">Reading public data. No credentials are required.</p>
+      <div class="steps" aria-hidden="true">
+        <div class="step active" data-step="0"><span>01 · CONNECTING TO GITHUB</span><span>...</span></div>
+        <div class="step" data-step="1"><span>02 · READING PROFILE</span><span>WAIT</span></div>
+        <div class="step" data-step="2"><span>03 · ANALYZING REPOSITORIES</span><span>WAIT</span></div>
+        <div class="step" data-step="3"><span>04 · BUILDING PASSPORT</span><span>WAIT</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="view-error" class="view" aria-labelledby="error-title" aria-live="assertive">
+  <div class="error-shell">
+    <div class="error-card">
+      <span class="tag">SYSTEM RESPONSE</span>
+      <h2 id="error-title">USER NOT FOUND</h2>
+      <p id="error-message">The requested GitHub profile could not be loaded.</p>
+      <div class="error-actions">
+        <button id="error-retry" class="btn dark" type="button">↻ RETRY</button>
+        <button id="error-home" class="btn" type="button">← NEW SEARCH</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="view-results" class="view" aria-labelledby="results-title">
+  <div class="dashboard-nav">
+    <button id="new-search-btn" class="btn small" type="button">← NEW SEARCH</button>
+    <div class="actions">
+      <a id="github-profile-btn" class="btn small blue" href="#" target="_blank" rel="noopener noreferrer">VIEW ON GITHUB ↗</a>
+      <button id="share-btn" class="btn small coral" type="button">CREATE PASSPORT ↗</button>
+    </div>
+  </div>
+  <h1 id="results-title" class="sr-only">GitPulse developer dashboard</h1>
+
+  <div class="dashboard-grid">
+    <article class="passport card" id="passport-card" aria-label="Developer passport">
+      <div class="passport-top"><span class="passport-brand">GITPULSE PASSPORT</span><span id="passport-id" class="passport-brand">GP-0000</span></div>
+      <div class="passport-profile">
+        <div class="avatar-frame">
+          <img id="profile-avatar" class="passport-avatar" alt="GitHub profile avatar" referrerpolicy="no-referrer">
+          <div id="avatar-fallback" class="avatar-fallback" aria-hidden="true">GP</div>
+        </div>
+        <div id="profile-name" class="passport-name">Developer</div>
+        <div id="profile-handle" class="passport-handle">@username</div>
+        <p id="profile-bio" class="passport-bio">BIO NOT PROVIDED</p>
+      </div>
+      <div class="passport-meta">
+        <div class="meta"><small>Followers</small><strong id="profile-followers">0</strong></div>
+        <div class="meta"><small>Following</small><strong id="profile-following">0</strong></div>
+        <div class="meta"><small>Repositories</small><strong id="profile-repos">0</strong></div>
+        <div class="meta"><small>Public Gists</small><strong id="profile-gists">0</strong></div>
+      </div>
+      <div class="barcode" aria-hidden="true"></div>
+      <div class="passport-foot"><span id="profile-since">GITHUB SINCE —</span><span>GITHUB PUBLIC DATA</span></div>
+    </article>
+
+    <div class="analytics">
+      <div class="metrics">
+        <article class="metric card yellow"><div class="metric-label">Total Stars</div><div id="metric-stars" class="metric-value">0</div><div class="metric-note">Across fetched public repositories</div></article>
+        <article class="metric card coral"><div class="metric-label">Total Forks</div><div id="metric-forks" class="metric-value">0</div><div class="metric-note">Across fetched public repositories</div></article>
+        <article class="metric card blue"><div class="metric-label">Active Repositories</div><div id="metric-active" class="metric-value">0</div><div class="metric-note">Updated within the last 6 months</div></article>
+      </div>
+
+      <div class="split">
+        <article class="score-card card">
+          <div class="score-row"><div><div class="metric-label">GitPulse Score</div><div class="metric-note">Community activity estimate</div></div><div><span id="score-number" class="score-number">0</span><span style="font-weight:700;color:var(--muted)">/100</span></div></div>
+          <div class="score-meter" aria-label="GitPulse score"><span id="score-fill"></span></div>
+          <p class="metric-note" style="margin-top:12px">Estimated from public repository volume, stars, forks, followers, original work, and recent repository updates. Not an official GitHub score.</p>
+        </article>
+        <article class="activity-card card">
+          <div class="metric-label">Activity Signal</div>
+          <div class="activity-status"><span id="activity-dot" class="status-dot"></span><span id="activity-label">INACTIVE</span></div>
+          <p id="activity-note" class="activity-note">Based on recent repository updates, not commit activity.</p>
+        </article>
+      </div>
+
+      <article class="language-card card">
+        <div class="section-head"><div><div class="section-title">Language Breakdown</div><div class="metric-note">Byte-weighted language data where available</div></div><div id="language-meta" class="section-meta">0 REPOS ANALYZED</div></div>
+        <div id="language-bar" class="lang-bar" role="img" aria-label="Language breakdown"></div>
+        <div id="language-legend" class="lang-legend"></div>
+      </article>
+    </div>
+  </div>
+
+  <div class="repos-wrap">
+    <div class="section-head"><div><div class="section-title">Top Repositories</div><div class="metric-note">Ranked using stars, forks, and recent updates. Forks are excluded from primary analytics.</div></div><div id="repos-meta" class="section-meta">0 REPOSITORIES</div></div>
+    <div id="repos-grid" class="repos-grid"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div>GITPULSE · DEVELOPER PASSPORT GENERATOR · BUILT WITH GITHUB REST API</div>
+  <div class="footer-right">PUBLIC GITHUB DATA ONLY · NOT AFFILIATED WITH GITHUB · <a href="https://github.com" target="_blank" rel="noopener noreferrer">GITHUB ↗</a></div>
+</footer>
+
+<div id="share-modal" class="modal-backdrop" role="presentation">
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="share-title" tabindex="-1">
+    <div class="dialog-head"><h2 id="share-title">Export & Share Passport</h2><button id="close-modal" class="icon-btn" type="button" aria-label="Close share dialog">✕</button></div>
+    <div class="share-preview">
+      <div class="share-mini">
+        <img id="share-avatar" class="share-avatar" alt="Developer avatar" referrerpolicy="no-referrer">
+        <div><h3 id="share-name">Developer</h3><p id="share-handle">@username · GITHUB PUBLIC DATA</p></div>
+        <div class="share-score"><span id="share-score">0</span><small style="font-size:.65rem;color:var(--muted)"> / 100</small></div>
+      </div>
+    </div>
+    <div class="share-field"><label for="profile-url-code">Profile URL</label><div id="profile-url-code" class="code-box"></div><button id="copy-url" class="btn small blue" type="button">COPY PROFILE URL 🔗</button></div>
+    <div class="share-field"><label for="markdown-code">Markdown badge</label><div id="markdown-code" class="code-box"></div><button id="copy-markdown" class="btn small" type="button">COPY MARKDOWN 📋</button></div>
+    <div class="share-field"><label for="html-code">HTML embed</label><div id="html-code" class="code-box"></div><button id="copy-html" class="btn small" type="button">COPY HTML EMBED &lt;/&gt;</button></div>
+    <div class="share-actions"><button id="download-png" class="btn green" type="button">DOWNLOAD PNG 📥</button><button id="close-modal-2" class="btn dark" type="button">DONE</button></div>
+  </div>
+</div>
+
+<div id="export-target" aria-hidden="true">
+  <div class="export-head"><div class="export-logo"><span class="export-gp">GP</span><span>GITPULSE PASSPORT</span></div><div id="export-id" class="export-id">GP-0000</div></div>
+  <div class="export-body">
+    <div><img id="export-avatar" class="export-avatar" alt=""><div id="export-name" class="export-name" style="margin-top:13px">Developer</div><div id="export-handle" class="export-handle">@username</div></div>
+    <div>
+      <div class="export-stats"><div class="export-stat"><small>Repositories</small><b id="export-repos">0</b></div><div class="export-stat"><small>Followers</small><b id="export-followers">0</b></div><div class="export-stat"><small>Gists</small><b id="export-gists">0</b></div><div class="export-stat"><small>GitPulse Score</small><b id="export-score">0/100</b></div></div>
+      <div id="export-bio" class="export-bio">PUBLIC GITHUB DEVELOPER PASSPORT</div>
+    </div>
+  </div>
+  <div class="export-foot"><span id="export-since">GITHUB SINCE —</span><span>PUBLIC PROFILE · GITPULSE ESTIMATE</span></div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+const CONFIG = Object.freeze({
+  API_BASE: 'https://api.github.com',
+  API_VERSION: '2026-03-10',
+  CACHE_TTL: 10 * 60 * 1000,
+  RECENT_LIMIT: 5,
+  REPO_PAGE_SIZE: 100,
+  LANGUAGE_REPO_LIMIT: 12,
+  LANGUAGE_CONCURRENCY: 3,
+  REQUEST_TIMEOUT: 15000
+});
+
+const LANGUAGE_COLORS = {
+  JavaScript:'#f7df1e',TypeScript:'#3178c6',Python:'#3776ab',HTML:'#e34f26',CSS:'#1572b6',
+  Java:'#b07219','C++':'#00599c',C:'#a8b9cc','C#':'#239120',PHP:'#777bb4',Ruby:'#cc342d',
+  Go:'#00add8',Rust:'#dea584',Swift:'#f05138',Kotlin:'#7f52ff',Shell:'#89e051',Dart:'#00b4ab',
+  Vue:'#41b883',Svelte:'#ff3e00',Scala:'#dc322f',R:'#198ce7',Jupyter:'#da5b0b',Default:'#9b9b93'
+};
+
+const state = {
+  view:'landing', username:'', user:null, repos:[], languages:{}, languageReposAnalyzed:0,
+  metrics:{stars:0,forks:0,active:0,score:0,activity:'INACTIVE',lastActivity:null},
+  theme:null, controller:null, requestId:0, lastError:null, previousFocus:null, loadingTimer:null
+};
+
+const $ = id => document.getElementById(id);
+const DOM = {
+  views:{landing:$('view-landing'),loading:$('view-loading'),error:$('view-error'),results:$('view-results')},
+  form:$('search-form'),input:$('username-input'),fetch:$('fetch-btn'),recent:$('recent-searches'),
+  theme:$('theme-btn'),api:$('api-badge'),loadingTitle:$('loading-title'),steps:[...document.querySelectorAll('.step')],
+  errorTitle:$('error-title'),errorMessage:$('error-message'),errorRetry:$('error-retry'),errorHome:$('error-home'),
+  newSearch:$('new-search-btn'),github:$('github-profile-btn'),share:$('share-btn'),
+  avatar:$('profile-avatar'),avatarFallback:$('avatar-fallback'),name:$('profile-name'),handle:$('profile-handle'),
+  bio:$('profile-bio'),followers:$('profile-followers'),following:$('profile-following'),repos:$('profile-repos'),
+  gists:$('profile-gists'),since:$('profile-since'),passportId:$('passport-id'),stars:$('metric-stars'),
+  forks:$('metric-forks'),active:$('metric-active'),score:$('score-number'),scoreFill:$('score-fill'),
+  activityDot:$('activity-dot'),activityLabel:$('activity-label'),activityNote:$('activity-note'),
+  languageBar:$('language-bar'),languageLegend:$('language-legend'),languageMeta:$('language-meta'),
+  reposGrid:$('repos-grid'),reposMeta:$('repos-meta'),
+  modal:$('share-modal'),dialog:document.querySelector('#share-modal .dialog'),closeModal:$('close-modal'),
+  closeModal2:$('close-modal-2'),shareAvatar:$('share-avatar'),shareName:$('share-name'),shareHandle:$('share-handle'),
+  shareScore:$('share-score'),profileUrl:$('profile-url-code'),markdown:$('markdown-code'),html:$('html-code'),
+  copyUrl:$('copy-url'),copyMarkdown:$('copy-markdown'),copyHtml:$('copy-html'),download:$('download-png'),
+  exportTarget:$('export-target'),exportAvatar:$('export-avatar'),exportId:$('export-id'),exportName:$('export-name'),
+  exportHandle:$('export-handle'),exportRepos:$('export-repos'),exportFollowers:$('export-followers'),
+  exportGists:$('export-gists'),exportScore:$('export-score'),exportBio:$('export-bio'),exportSince:$('export-since')
+};
+
+function safeStorageGet(key){try{return localStorage.getItem(key)}catch{return null}}
+function safeStorageSet(key,value){try{localStorage.setItem(key,value)}catch{}}
+function safeStorageRemove(key){try{localStorage.removeItem(key)}catch{}}
+
+function getTheme(){
+  const stored=safeStorageGet('gitpulse_theme');
+  if(stored==='light'||stored==='dark') return stored;
+  return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+}
+function setTheme(theme){
+  state.theme=theme;
+  document.documentElement.dataset.theme=theme;
+  safeStorageSet('gitpulse_theme',theme);
+  DOM.theme.textContent=theme==='dark'?'☀️ LIGHT':'🌙 DARK';
+  DOM.theme.setAttribute('aria-pressed',String(theme==='dark'));
+}
+function toggleTheme(){setTheme(state.theme==='dark'?'light':'dark')}
+
+function setView(view){
+  state.view=view;
+  Object.entries(DOM.views).forEach(([key,node])=>node.classList.toggle('active',key===view));
+  if(view!=='loading') document.querySelector('#view-loading')?.setAttribute('aria-busy','false');
+  if(view==='loading') document.querySelector('#view-loading')?.setAttribute('aria-busy','true');
+  if(view!=='landing') window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function normalizeUsername(raw){
+  const value=String(raw??'').trim();
+  if(!value) return {ok:false,message:'Enter a GitHub username to continue.'};
+  if(value.length>39) return {ok:false,message:'GitHub usernames are limited to 39 characters.'};
+  if(!/^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?$/.test(value))
+    return {ok:false,message:'That username contains characters GitHub usernames cannot use.'};
+  return {ok:true,value};
+}
+
+function setFetchBusy(busy){
+  DOM.fetch.disabled=busy;
+  DOM.fetch.textContent=busy?'FETCHING... ⚡':'FETCH STATS ⚡';
+}
+
+function loadingStep(index){
+  DOM.steps.forEach((step,i)=>{
+    step.classList.toggle('active',i===index);
+    step.classList.toggle('done',i<index);
+    const status=step.lastElementChild;
+    if(status) status.textContent=i<index?'DONE':i===index?'...':'WAIT';
+  });
+  DOM.loadingTitle.textContent=['CONNECTING TO GITHUB','READING PROFILE','ANALYZING REPOSITORIES','BUILDING PASSPORT'][index];
+}
+
+function startLoading(){
+  setView('loading'); loadingStep(0);
+  let step=0;
+  clearInterval(state.loadingTimer);
+  state.loadingTimer=setInterval(()=>{if(step<3){step++;loadingStep(step)}},700);
+}
+function stopLoading(){clearInterval(state.loadingTimer);state.loadingTimer=null}
+
+function apiHeaders(){
+  return {'Accept':'application/vnd.github+json','X-GitHub-Api-Version':CONFIG.API_VERSION};
+}
+
+async function fetchWithTimeout(url,options={},signal){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),CONFIG.REQUEST_TIMEOUT);
+  const onAbort=()=>controller.abort();
+  signal?.addEventListener('abort',onAbort,{once:true});
+  try{return await fetch(url,{...options,headers:{...apiHeaders(),...(options.headers||{})},signal:controller.signal})}
+  finally{clearTimeout(timer);signal?.removeEventListener('abort',onAbort)}
+}
+
+function rateFromHeaders(response){
+  const limit=Number(response.headers.get('x-ratelimit-limit'));
+  const remaining=Number(response.headers.get('x-ratelimit-remaining'));
+  const reset=Number(response.headers.get('x-ratelimit-reset'));
+  if(Number.isFinite(limit)&&Number.isFinite(remaining)) updateRateBadge(remaining,limit,reset);
+  return {limit,remaining,reset};
+}
+function updateRateBadge(remaining,limit,reset){
+  DOM.api.hidden=false;
+  DOM.api.textContent=`API ${remaining} / ${limit}`;
+  DOM.api.classList.toggle('warn',remaining<=10);
+  DOM.api.classList.toggle('ok',remaining>10);
+  if(remaining<=0&&Number.isFinite(reset)){
+    const when=new Date(reset*1000);
+    DOM.api.title=`Rate limit resets around ${when.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}`;
+  }else DOM.api.title='GitHub anonymous API request budget from response headers';
+}
+
+function classifyResponse(response,username){
+  if(response.status===404) return {title:'USER NOT FOUND',message:`No public GitHub profile named "${username}" was found.`};
+  if(response.status===403) return {title:'GITHUB RATE LIMIT / FORBIDDEN',message:'GitHub rejected this anonymous request. The request budget may be exhausted. Check the API badge and try again after the reset.'};
+  if(response.status===429) return {title:'TOO MANY REQUESTS',message:'GitHub is temporarily rate limiting this browser. Please wait for the reset instead of retrying repeatedly.'};
+  if(response.status===500) return {title:'GITHUB SERVER ERROR',message:'GitHub returned a server-side error. Try again shortly.'};
+  if(response.status===502||response.status===503) return {title:'GITHUB TEMPORARILY UNAVAILABLE',message:'GitHub is temporarily unavailable. Try again shortly.'};
+  return null;
+}
+
+function showError(title,message){
+  state.lastError={title,message};
+  DOM.errorTitle.textContent=title;
+  DOM.errorMessage.textContent=message;
+  setView('error');
+}
+
+function cacheKey(username){return `gitpulse:user:${username.toLowerCase()}`}
+function readCache(username){
+  try{
+    const raw=safeStorageGet(cacheKey(username)); if(!raw) return null;
+    const item=JSON.parse(raw);
+    if(Date.now()-item.savedAt>CONFIG.CACHE_TTL){safeStorageRemove(cacheKey(username));return null}
+    return item.data;
+  }catch{return null}
+}
+function writeCache(username,data){
+  safeStorageSet(cacheKey(username),JSON.stringify({savedAt:Date.now(),data}));
+}
+
+function getRecent(){
+  try{return JSON.parse(safeStorageGet('gitpulse_recent')||'[]').filter(Boolean).slice(0,CONFIG.RECENT_LIMIT)}
+  catch{return []}
+}
+function saveRecent(username){
+  const next=[username,...getRecent().filter(x=>x.toLowerCase()!==username.toLowerCase())].slice(0,CONFIG.RECENT_LIMIT);
+  safeStorageSet('gitpulse_recent',JSON.stringify(next));renderRecent();
+}
+function renderRecent(){
+  const items=getRecent(); DOM.recent.hidden=items.length===0; DOM.recent.replaceChildren();
+  if(!items.length)return;
+  const label=document.createElement('span');label.className='recent-label';label.textContent='RECENT';DOM.recent.appendChild(label);
+  items.forEach(name=>{
+    const b=document.createElement('button');b.type='button';b.className='recent-chip';b.textContent=name;
+    b.addEventListener('click',()=>{DOM.input.value=name;search(name)});
+    DOM.recent.appendChild(b);
+  });
+  const clear=document.createElement('button');clear.type='button';clear.className='clear-history';clear.textContent='CLEAR HISTORY';
+  clear.addEventListener('click',()=>{safeStorageRemove('gitpulse_recent');renderRecent()});DOM.recent.appendChild(clear);
+}
+
+function isFreshActivity(repo){
+  if(!repo?.pushed_at)return false;
+  return (Date.now()-new Date(repo.pushed_at).getTime())<=180*24*60*60*1000;
+}
+
+function scoreData(user,repos){
+  const originals=repos.filter(r=>!r.fork);
+  const stars=repos.reduce((n,r)=>n+(Number(r.stargazers_count)||0),0);
+  const forks=repos.reduce((n,r)=>n+(Number(r.forks_count)||0),0);
+  const active=repos.filter(isFreshActivity).length;
+  const repoComponent=Math.min(22,Math.log1p(user.public_repos||0)*7);
+  const followerComponent=Math.min(22,Math.log1p(user.followers||0)*4);
+  const starComponent=Math.min(24,Math.log1p(stars)*4.5);
+  const forkComponent=Math.min(12,Math.log1p(forks)*3.5);
+  const activityComponent=Math.min(12,active*2);
+  const originalComponent=Math.min(8,originals.length*0.8);
+  return Math.max(0,Math.min(100,Math.round(repoComponent+followerComponent+starComponent+forkComponent+activityComponent+originalComponent)));
+}
+
+function computeAnalytics(user,repos){
+  const stars=repos.reduce((n,r)=>n+(Number(r.stargazers_count)||0),0);
+  const forks=repos.reduce((n,r)=>n+(Number(r.forks_count)||0),0);
+  const active=repos.filter(isFreshActivity).length;
+  const dated=repos.filter(r=>r.pushed_at).sort((a,b)=>new Date(b.pushed_at)-new Date(a.pushed_at));
+  const last=dated[0]?.pushed_at||null;
+  const days=last?Math.max(0,(Date.now()-new Date(last).getTime())/86400000):Infinity;
+  let activity='INACTIVE';
+  if(days<=14)activity='HIGHLY ACTIVE'; else if(days<=60)activity='RECENTLY ACTIVE'; else if(days<=180)activity='LOW ACTIVITY';
+  return {stars,forks,active,score:scoreData(user,repos),activity,lastActivity:last};
+}
+
+async function fetchProfileAndRepos(username,signal){
+  const userUrl=`${CONFIG.API_BASE}/users/${encodeURIComponent(username)}`;
+  const reposUrl=`${CONFIG.API_BASE}/users/${encodeURIComponent(username)}/repos?per_page=${CONFIG.REPO_PAGE_SIZE}&sort=pushed&direction=desc`;
+  const userRes=await fetchWithTimeout(userUrl,{},signal);
+  const rate=rateFromHeaders(userRes);
+  const error=classifyResponse(userRes,username);
+  if(error) throw Object.assign(new Error(error.message),{kind:'api',title:error.title});
+  if(!userRes.ok) throw Object.assign(new Error('Unexpected GitHub response.'),{kind:'api',title:'API RESPONSE ERROR'});
+  const user=await userRes.json();
+  if(!user||typeof user.login!=='string'||typeof user.public_repos!=='number')
+    throw Object.assign(new Error('GitHub returned an unexpected profile shape.'),{kind:'api',title:'API RESPONSE ERROR'});
+  const reposRes=await fetchWithTimeout(reposUrl,{},signal);
+  const repoRate=rateFromHeaders(reposRes);
+  const repoError=classifyResponse(reposRes,username);
+  if(repoError) throw Object.assign(new Error(repoError.message),{kind:'api',title:repoError.title});
+  if(!reposRes.ok) throw Object.assign(new Error('GitHub returned an unexpected repository response.'),{kind:'api',title:'API RESPONSE ERROR'});
+  const repos=await reposRes.json();
+  if(!Array.isArray(repos)) throw Object.assign(new Error('GitHub returned an unexpected repository list.'),{kind:'api',title:'API RESPONSE ERROR'});
+  return {user,repos,rate:repoRate.remaining>=0?repoRate:rate};
+}
+
+async function languageRequest(repo,signal){
+  const url=`${CONFIG.API_BASE}/repos/${encodeURIComponent(repo.owner.login)}/${encodeURIComponent(repo.name)}/languages`;
+  try{
+    const res=await fetchWithTimeout(url,{},signal); const rate=rateFromHeaders(res);
+    if(!res.ok)return null;
+    const data=await res.json();
+    return data&&typeof data==='object'?data:null;
+  }catch(err){if(err.name==='AbortError')throw err;return null}
+}
+
+async function analyzeLanguages(repos,signal){
+  const candidates=repos.filter(r=>!r.fork).slice().sort((a,b)=>{
+    const score=r=>((r.stargazers_count||0)*3)+(r.forks_count||0)+(isFreshActivity(r)?10:0);
+    return score(b)-score(a);
+  }).slice(0,CONFIG.LANGUAGE_REPO_LIMIT);
+  const map={};let index=0;let successful=0;
+  async function worker(){
+    while(index<candidates.length){
+      const repo=candidates[index++];
+      const data=await languageRequest(repo,signal);
+      if(data){
+        successful++;
+        Object.entries(data).forEach(([lang,bytes])=>{map[lang]=(map[lang]||0)+Number(bytes||0)});
+      }
+    }
+  }
+  await Promise.all(Array.from({length:Math.min(CONFIG.LANGUAGE_CONCURRENCY,candidates.length)},worker));
+  if(!successful){
+    candidates.forEach(repo=>{if(repo.language)map[repo.language]=(map[repo.language]||0)+1});
+  }
+  return {map,analyzed:candidates.length};
+}
+
+async function loadUser(username,{force=false}={}){
+  const requestId=++state.requestId;
+  state.username=username;
+  if(state.controller)state.controller.abort();
+  state.controller=new AbortController();
+  const signal=state.controller.signal;
+  const cached=!force?readCache(username):null;
+  if(cached){
+    state.user=cached.user;state.repos=cached.repos;state.languages=cached.languages||{};state.languageReposAnalyzed=cached.languageReposAnalyzed||0;
+    state.metrics=computeAnalytics(state.user,state.repos);saveRecent(username);updateUrl(username,false);renderResults();setView('results');return;
+  }
+  startLoading();
+  setFetchBusy(true);
+  try{
+    const base=await fetchProfileAndRepos(username,signal);
+    if(requestId!==state.requestId)return;
+    loadingStep(2);
+    const lang=await analyzeLanguages(base.repos,signal);
+    if(requestId!==state.requestId)return;
+    state.user=base.user;state.repos=base.repos;state.languages=lang.map;state.languageReposAnalyzed=lang.analyzed;
+    state.metrics=computeAnalytics(state.user,state.repos);
+    writeCache(username,{user:state.user,repos:state.repos,languages:state.languages,languageReposAnalyzed:state.languageReposAnalyzed});
+    saveRecent(username);updateUrl(username,true);loadingStep(3);renderResults();setView('results');
+  }catch(err){
+    if(err?.name==='AbortError')return;
+    const title=err?.title||'NETWORK ERROR';
+    const message=err?.kind==='api'?err.message:'Unable to reach GitHub. Check your connection and try again.';
+    showError(title,message);
+  }finally{
+    if(requestId===state.requestId){stopLoading();setFetchBusy(false)}
+  }
+}
+
+function updateUrl(username,replace){
+  const url=new URL(window.location.href);
+  url.searchParams.set('user',username);
+  history[replace?'replaceState':'pushState']({user:username},'',url);
+}
+
+function clearUserUrl(){
+  const url=new URL(window.location.href);url.searchParams.delete('user');history.pushState({},'',url);
+}
+
+function formatNumber(value){
+  const n=Number(value)||0;
+  if(n<1000)return String(Math.round(n));
+  if(n<1000000)return `${(n/1000).toFixed(n>=10000?0:1).replace(/\.0$/,'')}K`;
+  return `${(n/1000000).toFixed(n>=10000000?0:1).replace(/\.0$/,'')}M`;
+}
+function formatRelative(date){
+  if(!date)return 'No recent activity';
+  const diff=Math.max(0,Date.now()-new Date(date).getTime()),days=Math.floor(diff/86400000);
+  if(days<1)return 'Updated today'; if(days===1)return 'Updated 1 day ago'; if(days<30)return `Updated ${days} days ago`;
+  const months=Math.floor(days/30); if(months<12)return `Updated ${months} month${months>1?'s':''} ago`;
+  const years=Math.floor(months/12);return `Updated ${years} year${years>1?'s':''} ago`;
+}
+function yearFrom(date){return date?new Date(date).getFullYear():'—'}
+function passportId(login){
+  let h=2166136261;for(const c of login){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return `GP-${String((h>>>0)%9000+1000)}`;
+}
+function colorFor(lang){return LANGUAGE_COLORS[lang]||LANGUAGE_COLORS.Default}
+function validGithubUrl(url){
+  try{const u=new URL(url);return u.protocol==='https:'&&u.hostname==='github.com'}catch{return false}
+}
+function initials(user){return (user?.name||user?.login||'GP').split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase()}
+
+function setAvatar(img,fallback,user){
+  img.onerror=()=>{img.style.display='none';fallback.style.display='grid';fallback.textContent=initials(user)};
+  img.onload=()=>{img.style.display='block';fallback.style.display='none'};
+  img.src=user.avatar_url||'';
+  img.alt=`${user.login}'s GitHub avatar`;
+}
+
+function renderResults(){
+  const u=state.user,m=state.metrics;
+  DOM.passportId.textContent=passportId(u.login);
+  setAvatar(DOM.avatar,DOM.avatarFallback,u);
+  DOM.name.textContent=u.name||u.login;
+  DOM.handle.textContent=`@${u.login}`;
+  DOM.bio.textContent=u.bio||'BIO NOT PROVIDED';
+  DOM.followers.textContent=formatNumber(u.followers);DOM.following.textContent=formatNumber(u.following);
+  DOM.repos.textContent=formatNumber(u.public_repos);DOM.gists.textContent=formatNumber(u.public_gists);
+  DOM.since.textContent=`GITHUB SINCE ${yearFrom(u.created_at)}`;
+  DOM.stars.textContent=formatNumber(m.stars);DOM.forks.textContent=formatNumber(m.forks);DOM.active.textContent=formatNumber(m.active);
+  DOM.score.textContent=String(m.score);DOM.scoreFill.style.width=`${m.score}%`;
+  DOM.activityLabel.textContent=m.activity;
+  const activityColors={'HIGHLY ACTIVE':'var(--green)','RECENTLY ACTIVE':'var(--blue)','LOW ACTIVITY':'var(--coral)','INACTIVE':'var(--muted)'};
+  DOM.activityDot.style.background=activityColors[m.activity]||'var(--muted)';
+  DOM.activityNote.textContent=m.lastActivity?`Based on recent repository updates · ${formatRelative(m.lastActivity)}.`:'No recent repository update data is available.';
+  DOM.github.href=validGithubUrl(u.html_url)?u.html_url:'#';
+  renderLanguages();renderRepos();prepareShare();
+}
+
+function renderLanguages(){
+  DOM.languageBar.replaceChildren();DOM.languageLegend.replaceChildren();
+  const entries=Object.entries(state.languages).sort((a,b)=>b[1]-a[1]);
+  const total=entries.reduce((n,[,v])=>n+Number(v||0),0);
+  DOM.languageMeta.textContent=`${state.languageReposAnalyzed} REPOSITORIES ANALYZED`;
+  if(!entries.length){
+    const empty=document.createElement('div');empty.className='empty';empty.textContent='NO LANGUAGE DATA';DOM.languageBar.replaceWith(empty);return;
+  }
+  DOM.languageBar.className='lang-bar';DOM.languageBar.setAttribute('aria-label','Language breakdown');
+  entries.slice(0,10).forEach(([lang,bytes])=>{
+    const pct=(Number(bytes)/total)*100,seg=document.createElement('div');seg.className='lang-seg';seg.style.width=`${pct}%`;seg.style.background=colorFor(lang);seg.title=`${lang}: ${pct.toFixed(1)}%`;DOM.languageBar.appendChild(seg);
+    const item=document.createElement('div');item.className='lang-item';const dot=document.createElement('span');dot.className='lang-dot';dot.style.background=colorFor(lang);
+    const text=document.createElement('span');text.textContent=`${lang} ${pct.toFixed(1)}%`;item.append(dot,text);DOM.languageLegend.appendChild(item);
+  });
+}
+
+function repoRank(r){
+  const stars=Math.log1p(r.stargazers_count||0)*5;
+  const forks=Math.log1p(r.forks_count||0)*3;
+  const recent=isFreshActivity(r)?12:0;
+  const original=r.fork?0:6;
+  const popularity=(r.watchers_count||0)>0?Math.log1p(r.watchers_count)*1.5:0;
+  return stars+forks+recent+original+popularity;
+}
+function renderRepos(){
+  DOM.reposGrid.replaceChildren();
+  const primary=state.repos.filter(r=>!r.fork);
+  const ranked=[...primary].sort((a,b)=>repoRank(b)-repoRank(a)).slice(0,4);
+  DOM.reposMeta.textContent=`${ranked.length} HIGHLIGHTED · ${primary.length} ORIGINAL REPOS`;
+  if(!ranked.length){
+    const empty=document.createElement('div');empty.className='empty';empty.textContent='NO PUBLIC ORIGINAL REPOSITORIES';DOM.reposGrid.appendChild(empty);return;
+  }
+  ranked.forEach(repo=>{
+    const a=document.createElement('a');a.className='repo card';a.target='_blank';a.rel='noopener noreferrer';
+    a.href=validGithubUrl(repo.html_url)?repo.html_url:'#';a.setAttribute('aria-label',`Open repository ${repo.name} on GitHub`);
+    const top=document.createElement('div');top.className='repo-top';const name=document.createElement('div');name.className='repo-name';name.textContent=repo.name;
+    const lang=document.createElement('span');lang.className='repo-lang';lang.textContent=repo.language||'LANGUAGE N/A';if(repo.language)lang.style.background=colorFor(repo.language);
+    top.append(name,lang);
+    const desc=document.createElement('p');desc.className='repo-desc';desc.textContent=repo.description||'NO DESCRIPTION PROVIDED';
+    const tags=document.createElement('div');tags.className='repo-tags';
+    [['★',formatNumber(repo.stargazers_count)],['⑂',formatNumber(repo.forks_count)],['◷',formatRelative(repo.pushed_at)]].forEach(([icon,val])=>{const t=document.createElement('span');t.className='repo-tag';t.textContent=`${icon} ${val}`;tags.appendChild(t)});
+    const foot=document.createElement('div');foot.className='repo-foot';const vis=document.createElement('span');vis.textContent=repo.visibility?.toUpperCase()||'PUBLIC';const view=document.createElement('span');view.textContent='VIEW ↗';foot.append(vis,view);
+    a.append(top,desc,tags,foot);DOM.reposGrid.appendChild(a);
+  });
+}
+
+function currentProfileUrl(){
+  const url=new URL(window.location.href);url.searchParams.set('user',state.username);return url.href;
+}
+function prepareShare(){
+  const u=state.user,url=currentProfileUrl();
+  const md=`[![GitPulse Passport](https://img.shields.io/badge/GitPulse-${encodeURIComponent(u.login)}-FFD93D?style=for-the-badge)](${url})`;
+  const html=`<a href="${escapeAttr(url)}" target="_blank" rel="noopener noreferrer"><img src="${escapeAttr(new URL('/badge/gitpulse-passport',window.location.origin).href)}" alt="GitPulse Passport for @${escapeAttr(u.login)}"></a>`;
+  DOM.profileUrl.textContent=url;DOM.markdown.textContent=md;DOM.html.textContent=html;
+  DOM.shareAvatar.src=u.avatar_url||'';DOM.shareAvatar.alt=`${u.login}'s GitHub avatar`;DOM.shareAvatar.onerror=()=>{DOM.shareAvatar.style.display='none'};
+  DOM.shareName.textContent=u.name||u.login;DOM.shareHandle.textContent=`@${u.login} · GITHUB PUBLIC DATA`;DOM.shareScore.textContent=mScore();
+  DOM.exportId.textContent=passportId(u.login);DOM.exportName.textContent=u.name||u.login;DOM.exportHandle.textContent=`@${u.login}`;
+  DOM.exportRepos.textContent=formatNumber(u.public_repos);DOM.exportFollowers.textContent=formatNumber(u.followers);DOM.exportGists.textContent=formatNumber(u.public_gists);
+  DOM.exportScore.textContent=`${mScore()}/100`;DOM.exportBio.textContent=u.bio||'PUBLIC GITHUB DEVELOPER PASSPORT';DOM.exportSince.textContent=`GITHUB SINCE ${yearFrom(u.created_at)}`;
+  DOM.exportAvatar.crossOrigin='anonymous';DOM.exportAvatar.src=u.avatar_url||'';
+}
+function mScore(){return state.metrics.score}
+function escapeAttr(value){return String(value).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+async function copyText(text,button,label){
+  const original=label;
+  try{
+    if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);
+    else{
+      const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();
+      if(!document.execCommand('copy'))throw new Error('copy failed');ta.remove();
+    }
+    button.textContent='COPIED ✓';setTimeout(()=>button.textContent=original,1800);
+  }catch{button.textContent='COPY FAILED';setTimeout(()=>button.textContent=original,1800)}
+}
+
+function openModal(){
+  if(!state.user)return;
+  state.previousFocus=document.activeElement;DOM.modal.classList.add('active');document.body.classList.add('modal-open');DOM.dialog.focus();
+}
+function closeModal(){
+  DOM.modal.classList.remove('active');document.body.classList.remove('modal-open');state.previousFocus?.focus?.();state.previousFocus=null;
+}
+async function exportPng(){
+  const original=DOM.download.textContent;
+  DOM.download.disabled=true;DOM.download.textContent='GENERATING...';
+  try{
+    if(typeof window.html2canvas!=='function')throw Object.assign(new Error('Library unavailable'),{kind:'library'});
+    const avatar=DOM.exportAvatar;
+    await new Promise(resolve=>{
+      if(!avatar.src||avatar.complete)return resolve();
+      avatar.addEventListener('load',resolve,{once:true});avatar.addEventListener('error',resolve,{once:true});
+      setTimeout(resolve,1200);
+    });
+    const canvas=await window.html2canvas(DOM.exportTarget,{scale:1,useCORS:true,allowTaint:false,backgroundColor:'#f4f4f0',logging:false});
+    const link=document.createElement('a');link.download=`GitPulse-Passport-${state.user.login}.png`;link.href=canvas.toDataURL('image/png');link.click();
+    DOM.download.textContent='DOWNLOADED ✓';
+  }catch(err){
+    if(err?.kind==='library')DOM.download.textContent='PNG EXPORT LIBRARY UNAVAILABLE';
+    else DOM.download.textContent='EXPORT FAILED';
+  }finally{setTimeout(()=>{DOM.download.disabled=false;DOM.download.textContent=original},2600)}
+}
+
+function search(raw,force=false){
+  const result=normalizeUsername(raw);
+  if(!result.ok){showError('USERNAME REQUIRED',result.message);return}
+  loadUser(result.value,{force});
+}
+function goHome(){
+  if(state.controller)state.controller.abort();state.requestId++;setFetchBusy(false);stopLoading();clearUserUrl();DOM.input.value='';setView('landing');DOM.input.focus();
+}
+
+DOM.form.addEventListener('submit',e=>{e.preventDefault();if(!DOM.fetch.disabled)search(DOM.input.value)});
+DOM.theme.addEventListener('click',toggleTheme);
+$('logo-home').addEventListener('click',e=>{e.preventDefault();goHome()});
+DOM.newSearch.addEventListener('click',goHome);
+DOM.errorHome.addEventListener('click',goHome);
+DOM.errorRetry.addEventListener('click',()=>state.username?search(state.username,true):goHome());
+DOM.share.addEventListener('click',openModal);
+DOM.closeModal.addEventListener('click',closeModal);DOM.closeModal2.addEventListener('click',closeModal);
+DOM.modal.addEventListener('click',e=>{if(e.target===DOM.modal)closeModal()});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&DOM.modal.classList.contains('active'))closeModal();
+  if(e.key==='Tab'&&DOM.modal.classList.contains('active')){
+    const focusables=[...DOM.dialog.querySelectorAll('button,a,[tabindex]:not([tabindex="-1"])')].filter(x=>!x.disabled);
+    if(!focusables.length)return;const first=focusables[0],last=focusables[focusables.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  }
+});
+DOM.copyUrl.addEventListener('click',()=>copyText(DOM.profileUrl.textContent,DOM.copyUrl,'COPY PROFILE URL 🔗'));
+DOM.copyMarkdown.addEventListener('click',()=>copyText(DOM.markdown.textContent,DOM.copyMarkdown,'COPY MARKDOWN 📋'));
+DOM.copyHtml.addEventListener('click',()=>copyText(DOM.html.textContent,DOM.copyHtml,'COPY HTML EMBED </>'));
+DOM.download.addEventListener('click',exportPng);
+
+window.addEventListener('popstate',()=>{
+  const param=new URLSearchParams(location.search).get('user');
+  if(param){DOM.input.value=param;search(param)}
+  else goHome();
+});
+
+window.addEventListener('error',e=>{
+  if(e.target===DOM.avatar||e.target===DOM.shareAvatar||e.target===DOM.exportAvatar)return;
+});
+window.addEventListener('unhandledrejection',e=>{
+  if(e.reason?.name==='AbortError')e.preventDefault();
+});
+
+function init(){
+  setTheme(getTheme());renderRecent();
+  const param=new URLSearchParams(location.search).get('user');
+  if(param){DOM.input.value=param;search(param)}
+}
+init();
+})();
+</script>
+</body>
+</html>
